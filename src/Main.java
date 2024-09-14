@@ -17,7 +17,7 @@ public class Main {
         InputStreamReader input = new InputStreamReader(System.in);
         BufferedReader reader = new BufferedReader(input);
 
-        while(true){
+        for(;;){
             System.out.print(">>>");
             String statement = reader.readLine();
             if(statement == null) break; // Ctrl + D
