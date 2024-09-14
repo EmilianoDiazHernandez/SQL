@@ -84,6 +84,7 @@ public class Scanner {
                     state = 0;
                     break;
                 default:
+
                     break;
             }
         }
