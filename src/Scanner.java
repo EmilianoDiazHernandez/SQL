@@ -32,83 +32,58 @@ public class Scanner {
 
     List<Token> scanTokens() {
         int state = 0;
-        char current = 0;
-        StringBuilder lexeme = new StringBuilder();
-        int inicioLexema = 0;
+        char character = 0;
+        String lexeme = "";
+        int beginLexeme = 0;
 
         for (int i = 0; i < source.length(); i++) {
-            current = source.charAt(i);
-            switch (current) {
-                case ' ': case '\r': case '\t': case '\n': break; // Ignore whitespace
-                case '+': tokens.add(new Token(TokenType.PLUS, "+")); break;
-                case '-': tokens.add(new Token(TokenType.MINUS, "-")); break;
-                case '*': tokens.add(new Token(TokenType.STAR, "*")); break;
-                case '/': tokens.add(new Token(TokenType.SLASH, "/")); break;
-                case ',': tokens.add(new Token(TokenType.COMA, ",")); break;
-                case ';': tokens.add(new Token(TokenType.SEMICOLON, ";")); break;
-                case '.': tokens.add(new Token(TokenType.DOT, ".")); break;
-                case '(': tokens.add(new Token(TokenType.LEFT_PAREN, "(")); break;
-                case ')': tokens.add(new Token(TokenType.RIGHT_PAREN, ")")); break;
-                case '<':
-                    if (source.charAt(i + 1) == '=') {
-                        tokens.add(new Token(TokenType.LE, "<="));
-                        i++;
-                    } else tokens.add(new Token(TokenType.LT, "<"));
-                    break;
-                case '>':
-                    if (source.charAt(i + 1) == '=') {
-                        tokens.add(new Token(TokenType.GE, ">="));
-                        i++;
-                    } else tokens.add(new Token(TokenType.GT, ">"));
-                    break;
-                case '=':
-                    if (source.charAt(i+1) == '='){
-                        tokens.add(new Token(TokenType.EQUAL, "=="));
-                        i++;
-                    }break;
-                case '!':
-                    if (source.charAt(i+1) == '='){
-                        tokens.add(new Token(TokenType.NE, "!="));
-                        i++;
-                    }break;
-                default:
-                    if(Character.isLetter(current)){
-                        while (Character.isLetter(source.charAt(i+1)) || isDigit(source.charAt(i+1))){
-                            lexeme.append(current);
-                            i++;
-                            current = source.charAt(i);
-                        }
-                        lexeme.append(current);
-                        tokens.add(new Token(reservedWords.getOrDefault(lexeme.toString(), TokenType.ID), lexeme.toString()));
-                        lexeme = new StringBuilder();
-                    } else if (isDigit(current)) {
-                        lexeme.append(current);
-                        while (isDigit(source.charAt(i+1))) {
-                            i++;
-                            current = source.charAt(i);
-                            lexeme.append(current);
-                        }
-                        if(source.charAt(i+1) == '.' && isDigit(source.charAt(i+2))){
-                            lexeme.append('.');
-                            i++;
-                        }
-                        while (isDigit(source.charAt(i+1))) {
-                            i++;
-                            current = source.charAt(i);
-                            lexeme.append(current);
-                        }
-                        if(source.charAt(i+1) == 'E' && isDigit(source.charAt(i+2))){
-                            lexeme.append('E');
-                            i++;
-                        }
-                        while (isDigit(source.charAt(i+1))) {
-                            i++;
-                            current = source.charAt(i);
-                            lexeme.append(current);
-                        }
-                        tokens.add(new Token(TokenType.NUMBER, lexeme.toString()));
-                        lexeme = new StringBuilder();
+            character = source.charAt(i);
+            switch (state) {
+                case 0:
+                    switch (character) {
+                        case ' ': case '\t': case '\n': break;
+                        case '+': tokens.add(new Token(TokenType.PLUS, "+")); break;
+                        case '-': tokens.add(new Token(TokenType.MINUS, "-")); break;
+                        case '*': tokens.add(new Token(TokenType.STAR, "*")); break;
+                        case '/': tokens.add(new Token(TokenType.SLASH, "/")); break;
+                        case ',': tokens.add(new Token(TokenType.COMA, ",")); break;
+                        case ';': tokens.add(new Token(TokenType.SEMICOLON, ";")); break;
+                        case '.': tokens.add(new Token(TokenType.DOT, ".")); break;
+                        case '(': tokens.add(new Token(TokenType.LEFT_PAREN, "(")); break;
+                        case ')': tokens.add(new Token(TokenType.RIGHT_PAREN, ")")); break;
+                        case '<': state = 1; break;
+                        case '>': state = 2; break;
+                        case '=': state = 3; break;
+                        case '!': state = 4; break;
                     }
+                    break;
+                case 1:
+                    if (character == '=') tokens.add(new Token(TokenType.LE, "<="));
+                    else {
+                        i--;
+                        tokens.add(new Token(TokenType.LT, "<"));
+                    }
+                    state = 0;
+                    break;
+                case 2:
+                    if (character == '=') tokens.add(new Token(TokenType.GE, ">="));
+                    else {
+                        i--;
+                        tokens.add(new Token(TokenType.GT, ">"));
+                    }
+                    state = 0;
+                    break;
+                case 3:
+                    if(character == '=') tokens.add(new Token(TokenType.EQ, "=="));
+                    else i--;
+                    state = 0;
+                    break;
+                case 4:
+                    if(character == '=') tokens.add(new Token(TokenType.NE, "!="));
+                    else i--;
+                    state = 0;
+                    break;
+                default:
                     break;
             }
         }
