@@ -18,7 +18,7 @@ public class Main {
         BufferedReader reader = new BufferedReader(input);
 
         for(;;){
-            System.out.print(">");
+            System.out.print(">>>");
             String statement = reader.readLine();
             if(statement == null) break; // Ctrl + D
             ejecutar(statement);
