@@ -45,9 +45,7 @@ public class Main {
     }
 
     private static void reportar(int linea, String donde, String mensaje){
-        System.err.println(
-                "[linea " + linea + "] Error " + donde + ": " + mensaje
-        );
+        System.err.println("[linea " + linea + "] Error " + donde + ": " + mensaje);
         error = true;
     }
 }
