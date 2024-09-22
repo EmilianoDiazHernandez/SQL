@@ -31,7 +31,7 @@ public class Scanner {
     List<Token> scanTokens() {
         int state = 0;
         char character = 0;
-        String lexeme = "";
+        StringBuilder lexeme = new StringBuilder();
         int beginLexeme = 0;
 
         for (int i = 0; i < source.length(); i++) {
@@ -55,10 +55,10 @@ public class Scanner {
                         case '!': state = 4; break;
                         default:
                             if(Character.isLetter(character)){
-                                lexeme += character;
+                                lexeme.append(character);
                                 state = 5;
                             }else if(Character.isDigit(character)){
-                                lexeme += character;
+                                lexeme.append(character);
                                 state = 6;
                             }
                     }
@@ -90,57 +90,57 @@ public class Scanner {
                     state = 0;
                     break;
                 case 5:
-                    if(Character.isLetter(character) || Character.isDigit(character) || character == '_') lexeme += character;
+                    if(Character.isLetter(character) || Character.isDigit(character) || character == '_') lexeme.append(character);
                     else{
-                        tokens.add(new Token(reservedWords.getOrDefault(lexeme, TokenType.ID), lexeme, i));
-                        lexeme = "";
+                        tokens.add(new Token(reservedWords.getOrDefault(lexeme.toString(), TokenType.ID), lexeme.toString(), i));
+                        lexeme = new StringBuilder();
                         state = 0;
                         i--;
                     }
                     break;
                 case 6:
-                    if(Character.isDigit(character)) lexeme += character;
+                    if(Character.isDigit(character)) lexeme.append(character);
                     else if (character=='.' && Character.isDigit(source.charAt(i+1))) {
-                        lexeme += character;
+                        lexeme.append(character);
                         state = 7;
                     }else if (character=='E' && (Character.isDigit(source.charAt(i+1)) || source.charAt(i+1) == '-')) {
-                        lexeme += character;
+                        lexeme.append(character);
                         state = 8;
                     }else {
-                        tokens.add(new Token(TokenType.NUMBER, lexeme, i));
-                        lexeme = "";
+                        tokens.add(new Token(TokenType.NUMBER, lexeme.toString(), i));
+                        lexeme = new StringBuilder();
                         state = 0;
                         i--;
                     }
                     break;
                 case 7:
-                    if(Character.isDigit(character)) lexeme += character;
+                    if(Character.isDigit(character)) lexeme.append(character);
                     else if (character=='E' && (Character.isDigit(source.charAt(i+1)) || source.charAt(i+1) == '-')) {
-                        lexeme += character;
+                        lexeme.append(character);
                         state = 8;
                     }else {
-                        tokens.add(new Token(TokenType.NUMBER, lexeme, i));
-                        lexeme = "";
+                        tokens.add(new Token(TokenType.NUMBER, lexeme.toString(), i));
+                        lexeme = new StringBuilder();
                         state = 0;
                         i--;
                     }
                     break;
                 case 8:
                     if(Character.isDigit(character) || (character == '-' && Character.isDigit(source.charAt(i+1)))){
-                        lexeme += character;
+                        lexeme.append(character);
                         state = 9;
                     }else {
-                        tokens.add(new Token(TokenType.NUMBER, lexeme, i));
-                        lexeme = "";
+                        tokens.add(new Token(TokenType.NUMBER, lexeme.toString(), i));
+                        lexeme = new StringBuilder();
                         state = 0;
                         i--;
                     }
                     break;
                 case 9:
-                    if(Character.isDigit(character)) lexeme += character;
+                    if(Character.isDigit(character)) lexeme.append(character);
                     else {
-                        tokens.add(new Token(TokenType.NUMBER, lexeme, i));
-                        lexeme = "";
+                        tokens.add(new Token(TokenType.NUMBER, lexeme.toString(), i));
+                        lexeme = new StringBuilder();
                         state = 0;
                         i--;
                     }
