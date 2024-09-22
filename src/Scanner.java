@@ -103,7 +103,7 @@ public class Scanner {
                     else if (character=='.' && Character.isDigit(source.charAt(i+1))) {
                         lexeme += character;
                         state = 7;
-                    }else if (character=='E' && Character.isDigit(source.charAt(i+1))) {
+                    }else if (character=='E' && (Character.isDigit(source.charAt(i+1)) || source.charAt(i+1) == '-')) {
                         lexeme += character;
                         state = 8;
                     }else {
@@ -115,7 +115,7 @@ public class Scanner {
                     break;
                 case 7:
                     if(Character.isDigit(character)) lexeme += character;
-                    else if (character=='E' && Character.isDigit(source.charAt(i+1))) {
+                    else if (character=='E' && (Character.isDigit(source.charAt(i+1)) || source.charAt(i+1) == '-')) {
                         lexeme += character;
                         state = 8;
                     }else {
@@ -126,13 +126,19 @@ public class Scanner {
                     }
                     break;
                 case 8:
-                    if(Character.isDigit(character)){
-                        lexeme += character;
-                        state = 10;
-                    }else if(character == '-' && Character.isDigit(source.charAt(i+1))){
+                    if(Character.isDigit(character) || (character == '-' && Character.isDigit(source.charAt(i+1)))){
                         lexeme += character;
                         state = 9;
                     }else {
+                        tokens.add(new Token(TokenType.NUMBER, lexeme, i));
+                        lexeme = "";
+                        state = 0;
+                        i--;
+                    }
+                    break;
+                case 9:
+                    if(Character.isDigit(character)) lexeme += character;
+                    else {
                         tokens.add(new Token(TokenType.NUMBER, lexeme, i));
                         lexeme = "";
                         state = 0;
