@@ -29,9 +29,9 @@ public class Scanner {
     }
 
     List<Token> scanTokens() {
-        int state = 0;
-        char character;
         StringBuilder lexeme = new StringBuilder();
+        char character;
+        int state = 0;
         //int beginLexeme = 0;
 
         for (int i = 0; i < source.length(); i++) {
