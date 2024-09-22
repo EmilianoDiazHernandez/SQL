@@ -90,7 +90,7 @@ public class Scanner {
                     state = 0;
                     break;
                 case 5:
-                    if(Character.isLetter(character) || Character.isDigit(character)) lexeme += character;
+                    if(Character.isLetter(character) || Character.isDigit(character) || character == '_') lexeme += character;
                     else{
                         tokens.add(new Token(reservedWords.getOrDefault(lexeme, TokenType.ID), lexeme, i));
                         lexeme = "";
@@ -100,13 +100,13 @@ public class Scanner {
                     break;
                 case 6:
                     if(Character.isDigit(character)) lexeme += character;
-                    else if(character == '.' && Character.isDigit(source.charAt(i+1))){
+                    else if (character=='.' && Character.isDigit(source.charAt(i+1))) {
                         lexeme += character;
                         state = 7;
-                    }else if(character == 'E' && Character.isDigit(source.charAt(i+1))){
+                    }else if (character=='E' && Character.isDigit(source.charAt(i+1))) {
                         lexeme += character;
                         state = 8;
-                    }else{
+                    }else {
                         tokens.add(new Token(TokenType.NUMBER, lexeme, i));
                         lexeme = "";
                         state = 0;
@@ -115,7 +115,7 @@ public class Scanner {
                     break;
                 case 7:
                     if(Character.isDigit(character)) lexeme += character;
-                    else if(character == 'E' && Character.isDigit(source.charAt(i+1))){
+                    else if (character=='E' && Character.isDigit(source.charAt(i+1))) {
                         lexeme += character;
                         state = 8;
                     }else {
@@ -126,8 +126,13 @@ public class Scanner {
                     }
                     break;
                 case 8:
-                    if(Character.isDigit(character)) lexeme += character;
-                    else {
+                    if(Character.isDigit(character)){
+                        lexeme += character;
+                        state = 10;
+                    }else if(character == '-' && Character.isDigit(source.charAt(i+1))){
+                        lexeme += character;
+                        state = 9;
+                    }else {
                         tokens.add(new Token(TokenType.NUMBER, lexeme, i));
                         lexeme = "";
                         state = 0;
