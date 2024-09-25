@@ -49,17 +49,19 @@ public class Scanner {
                         case '.': tokens.add(new Token(TokenType.DOT, ".", i)); break;
                         case '(': tokens.add(new Token(TokenType.LEFT_PAREN, "(", i)); break;
                         case ')': tokens.add(new Token(TokenType.RIGHT_PAREN, ")", i)); break;
+                        case '=': tokens.add(new Token(TokenType.EQ, "=", i)); break;
                         case '<': state = 1; break;
                         case '>': state = 2; break;
-                        case '=': state = 3; break;
-                        case '!': state = 4; break;
+                        case '!': state = 3; break;
                         default:
                             if(Character.isLetter(character)){
                                 lexeme.append(character);
-                                state = 5;
+                                state = 4;
                             }else if(Character.isDigit(character)){
                                 lexeme.append(character);
-                                state = 6;
+                                state = 5;
+                            }else{
+                                Main.error(i, "Caracter no valido: " + character);
                             }
                     }
                     break;
@@ -80,16 +82,11 @@ public class Scanner {
                     state = 0;
                     break;
                 case 3:
-                    if(character == '=') tokens.add(new Token(TokenType.EQ, "==", i));
-                    else i--;
-                    state = 0;
-                    break;
-                case 4:
                     if(character == '=') tokens.add(new Token(TokenType.NE, "!=", i));
                     else i--;
                     state = 0;
                     break;
-                case 5:
+                case 4:
                     if(Character.isLetter(character) || Character.isDigit(character) || character == '_') lexeme.append(character);
                     else{
                         tokens.add(new Token(reservedWords.getOrDefault(lexeme.toString(), TokenType.ID), lexeme.toString(), i));
@@ -98,14 +95,26 @@ public class Scanner {
                         i--;
                     }
                     break;
-                case 6:
+                case 5:
                     if(Character.isDigit(character)) lexeme.append(character);
                     else if (character=='.' && Character.isDigit(source.charAt(i+1))) {
                         lexeme.append(character);
-                        state = 7;
+                        state = 6;
                     }else if (character=='E' && (Character.isDigit(source.charAt(i+1)) || source.charAt(i+1) == '-')) {
                         lexeme.append(character);
-                        state = 8;
+                        state = 7;
+                    }else {
+                        tokens.add(new Token(TokenType.NUMBER, lexeme.toString(), i));
+                        lexeme = new StringBuilder();
+                        state = 0;
+                        i--;
+                    }
+                    break;
+                case 6:
+                    if(Character.isDigit(character)) lexeme.append(character);
+                    else if (character=='E' && (Character.isDigit(source.charAt(i+1)) || source.charAt(i+1) == '-')) {
+                        lexeme.append(character);
+                        state = 7;
                     }else {
                         tokens.add(new Token(TokenType.NUMBER, lexeme.toString(), i));
                         lexeme = new StringBuilder();
@@ -114,8 +123,7 @@ public class Scanner {
                     }
                     break;
                 case 7:
-                    if(Character.isDigit(character)) lexeme.append(character);
-                    else if (character=='E' && (Character.isDigit(source.charAt(i+1)) || source.charAt(i+1) == '-')) {
+                    if(Character.isDigit(character) || (character == '-' && Character.isDigit(source.charAt(i+1)))){
                         lexeme.append(character);
                         state = 8;
                     }else {
@@ -126,17 +134,6 @@ public class Scanner {
                     }
                     break;
                 case 8:
-                    if(Character.isDigit(character) || (character == '-' && Character.isDigit(source.charAt(i+1)))){
-                        lexeme.append(character);
-                        state = 9;
-                    }else {
-                        tokens.add(new Token(TokenType.NUMBER, lexeme.toString(), i));
-                        lexeme = new StringBuilder();
-                        state = 0;
-                        i--;
-                    }
-                    break;
-                case 9:
                     if(Character.isDigit(character)) lexeme.append(character);
                     else {
                         tokens.add(new Token(TokenType.NUMBER, lexeme.toString(), i));
@@ -144,9 +141,6 @@ public class Scanner {
                         state = 0;
                         i--;
                     }
-                    break;
-                default:
-
                     break;
             }
         }
