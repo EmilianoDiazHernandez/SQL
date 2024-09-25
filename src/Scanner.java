@@ -61,7 +61,8 @@ public class Scanner {
                                 lexeme.append(character);
                                 state = 5;
                             }else{
-                                Main.error(i, "Caracter no valido: " + character);
+                                state = -1;
+                                i--;
                             }
                     }
                     break;
@@ -89,7 +90,7 @@ public class Scanner {
                 case 4:
                     if(Character.isLetter(character) || Character.isDigit(character) || character == '_') lexeme.append(character);
                     else{
-                        tokens.add(new Token(reservedWords.getOrDefault(lexeme.toString(), TokenType.ID), lexeme.toString(), i));
+                        tokens.add(new Token(reservedWords.getOrDefault(lexeme.toString().toUpperCase(), TokenType.ID), lexeme.toString(), i));
                         lexeme = new StringBuilder();
                         state = 0;
                         i--;
@@ -141,6 +142,10 @@ public class Scanner {
                         state = 0;
                         i--;
                     }
+                    break;
+                default:
+                    Main.error(i, "Caracater '"+character+"' invalido");
+                    state = 0;
                     break;
             }
         }
