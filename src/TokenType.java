@@ -6,7 +6,7 @@ public enum TokenType {
 
     COMA, SEMICOLON, DOT, LEFT_PAREN, RIGHT_PAREN,
     LT, LE, GT, GE, EQ, NE,
-    PLUS, MINUS, STAR, SLASH,
+    PLUS, MINUS, STAR, SLASH, QUOTES,
 
     NUMBER,
 
