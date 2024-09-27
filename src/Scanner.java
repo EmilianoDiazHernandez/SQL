@@ -49,6 +49,7 @@ public class Scanner {
                         case '.': tokens.add(new Token(TokenType.DOT, ".", i)); break;
                         case '(': tokens.add(new Token(TokenType.LEFT_PAREN, "(", i)); break;
                         case ')': tokens.add(new Token(TokenType.RIGHT_PAREN, ")", i)); break;
+                        case '"': tokens.add(new Token(TokenType.QUOTES, "\"", i)); break;
                         case '=': tokens.add(new Token(TokenType.EQ, "=", i)); break;
                         case '<': state = 1; break;
                         case '>': state = 2; break;
