@@ -42,7 +42,6 @@ public class Scanner {
                         case ' ': case '\t': case '\n': break;
                         case '+': tokens.add(new Token(TokenType.PLUS, "+", i)); break;
                         case '*': tokens.add(new Token(TokenType.STAR, "*", i)); break;
-                        case '/': tokens.add(new Token(TokenType.SLASH, "/", i)); break;
                         case ',': tokens.add(new Token(TokenType.COMA, ",", i)); break;
                         case ';': tokens.add(new Token(TokenType.SEMICOLON, ";", i)); break;
                         case '.': tokens.add(new Token(TokenType.DOT, ".", i)); break;
@@ -53,6 +52,7 @@ public class Scanner {
                         case '<': state = 1; break;
                         case '>': state = 2; break;
                         case '-': state = 8; break;
+                        case '/': state = 10; break;
                         default:
                             if(Character.isLetter(character)){
                                 lexeme.append(character);
@@ -149,6 +149,19 @@ public class Scanner {
                     break;
                 case 9:
                     if(character == '\n') state = 0;
+                    break;
+                case 10:
+                    if(character == '*') state = 11;
+                    else {
+                        tokens.add(new Token(TokenType.SLASH, "/", i));
+                        state = 0;
+                        i--;
+                    }
+                    break;
+                case 11:
+                    if (character == '*' && source.charAt(i+1) == '/') {
+                        state = 0; i++;
+                    }
                     break;
                 default:
                     Main.error(i, "Caracater '"+character+"' invalido");
