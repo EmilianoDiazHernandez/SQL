@@ -1,3 +1,7 @@
+package main;
+
+import scanner.*;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -40,7 +44,7 @@ public class Main {
     para reportar los errores:
     Interprete.error(....);
      */
-    static void error(int linea, String mensaje){
+    public static void error(int linea, String mensaje){
         reportar(linea, "", mensaje);
     }
 

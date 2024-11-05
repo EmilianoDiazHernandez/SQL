@@ -1,4 +1,6 @@
-public enum TokenType {
+package grammar;
+
+public enum TerminalSymbol {
     ID,
 
     // Palabras reservadas
