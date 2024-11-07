@@ -1,19 +1,19 @@
 package scanner;
 
-import grammar.TerminalSymbol;
+import grammar.TSymbol;
 
 public class Token {
-    final TerminalSymbol type;
+    final TSymbol type;
     public final String lexeme;
     public final int line;
 
-    public Token(TerminalSymbol type, String lexeme, int line) {
+    public Token(TSymbol type, String lexeme, int line) {
         this.type = type;
         this.lexeme = lexeme;
         this.line = line;
     }
 
-    public Token(TerminalSymbol type, String lexeme) {
+    public Token(TSymbol type, String lexeme) {
         this.type = type;
         this.lexeme = lexeme;
         this.line = 0;

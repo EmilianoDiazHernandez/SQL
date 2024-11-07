@@ -1,9 +1,8 @@
 package parser;
 
-import grammar.TerminalSymbol;
+import grammar.TSymbol;
 import scanner.Token;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +44,7 @@ public class Parser {
     }
 
     void parser(){
-        Map<TableEntry, List<TerminalSymbol>> map = new HashMap<>();
+        Map<TableEntry, List<TSymbol>> map = new HashMap<>();
 
     }
 }

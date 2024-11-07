@@ -1,15 +1,15 @@
 package parser;
 
-import grammar.NonTerminalSymbol;
-import grammar.TerminalSymbol;
+import grammar.NTSymbol;
+import grammar.TSymbol;
 
 public class TableEntry {
 
-    NonTerminalSymbol nonTerminal;
+    NTSymbol nonTerminal;
 
-    TerminalSymbol terminal;
+    TSymbol terminal;
 
-    TableEntry(NonTerminalSymbol nonTerminal, TerminalSymbol terminal) {
+    TableEntry(NTSymbol nonTerminal, TSymbol terminal) {
         this.nonTerminal = nonTerminal;
         this.terminal = terminal;
     }

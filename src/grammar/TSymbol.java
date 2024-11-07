@@ -1,6 +1,6 @@
 package grammar;
 
-public enum TerminalSymbol {
+public enum TSymbol implements Symbol {
     ID,
 
     // Palabras reservadas
@@ -8,7 +8,7 @@ public enum TerminalSymbol {
 
     COMA, SEMICOLON, DOT, LEFT_PAREN, RIGHT_PAREN,
     LT, LE, GT, GE, EQ, NE,
-    PLUS, MINUS, STAR, SLASH, QUOTES,
+    PLUS, MINUS, STAR, SLASH, STRING,
 
     NUMBER,
 
