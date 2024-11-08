@@ -3,6 +3,8 @@ package parser;
 import grammar.NTSymbol;
 import grammar.TSymbol;
 
+import java.util.Objects;
+
 public class TableEntry {
 
     NTSymbol nonTerminal;
@@ -16,7 +18,7 @@ public class TableEntry {
 
     @Override
     public int hashCode (){
-        return nonTerminal.hashCode() + terminal.hashCode();
+        return Objects.hash(nonTerminal, terminal);
     }
 
 }
