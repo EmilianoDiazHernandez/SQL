@@ -3,7 +3,7 @@ package scanner;
 import grammar.TSymbol;
 
 public class Token {
-    final TSymbol type;
+    public final TSymbol type;
     public final String lexeme;
     public final int line;
 
