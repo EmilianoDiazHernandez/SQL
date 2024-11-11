@@ -8,9 +8,11 @@ public enum TSymbol implements Symbol {
 
     COMA, SEMICOLON, DOT, LEFT_PAREN, RIGHT_PAREN,
     LT, LE, GT, GE, EQ, NE,
-    PLUS, MINUS, STAR, SLASH, STRING,
+    PLUS, MINUS, STAR, SLASH,
 
-    NUMBER,
+    NUMBER, STRING,
+
+    EPSILON,
 
     // Final de cadena
     EOF
