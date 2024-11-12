@@ -48,6 +48,58 @@ public class Parser {
 
         table.put(new TableEntry(NTSymbol.Q, TSymbol.SELECT).hashCode(), List.of(TSymbol.SELECT, NTSymbol.D, TSymbol.FROM, NTSymbol.T, NTSymbol.W));
 
+        table.put(new TableEntry(NTSymbol.D, TSymbol.DISTINCT).hashCode(), List.of(TSymbol.DISTINCT, NTSymbol.P));
+        table.put(new TableEntry(NTSymbol.D, TSymbol.STAR).hashCode(), List.of(NTSymbol.P));
+        table.put(new TableEntry(NTSymbol.D, TSymbol.ID).hashCode(), List.of(NTSymbol.P));
+        table.put(new TableEntry(NTSymbol.D, TSymbol.MINUS).hashCode(), List.of(NTSymbol.P));
+        table.put(new TableEntry(NTSymbol.D, TSymbol.TRUE).hashCode(), List.of(NTSymbol.P));
+        table.put(new TableEntry(NTSymbol.D, TSymbol.FALSE).hashCode(), List.of(NTSymbol.P));
+        table.put(new TableEntry(NTSymbol.D, TSymbol.NULL).hashCode(), List.of(NTSymbol.P));
+        table.put(new TableEntry(NTSymbol.D, TSymbol.NUMBER).hashCode(), List.of(NTSymbol.P));
+        table.put(new TableEntry(NTSymbol.D, TSymbol.STRING).hashCode(), List.of(NTSymbol.P));
+        table.put(new TableEntry(NTSymbol.D, TSymbol.NOT).hashCode(), List.of(NTSymbol.P));
+        table.put(new TableEntry(NTSymbol.D, TSymbol.LEFT_PAREN).hashCode(), List.of(NTSymbol.P));
+
+        table.put(new TableEntry(NTSymbol.P, TSymbol.STAR).hashCode(), List.of(TSymbol.STAR));
+        table.put(new TableEntry(NTSymbol.P, TSymbol.ID).hashCode(), List.of(NTSymbol.F));
+        table.put(new TableEntry(NTSymbol.P, TSymbol.MINUS).hashCode(), List.of(NTSymbol.F));
+        table.put(new TableEntry(NTSymbol.P, TSymbol.TRUE).hashCode(), List.of(NTSymbol.F));
+        table.put(new TableEntry(NTSymbol.P, TSymbol.FALSE).hashCode(), List.of(NTSymbol.F));
+        table.put(new TableEntry(NTSymbol.P, TSymbol.NULL).hashCode(), List.of(NTSymbol.F));
+        table.put(new TableEntry(NTSymbol.P, TSymbol.NUMBER).hashCode(), List.of(NTSymbol.F));
+        table.put(new TableEntry(NTSymbol.P, TSymbol.STRING).hashCode(), List.of(NTSymbol.F));
+        table.put(new TableEntry(NTSymbol.P, TSymbol.NOT).hashCode(), List.of(NTSymbol.F));
+        table.put(new TableEntry(NTSymbol.P, TSymbol.LEFT_PAREN).hashCode(), List.of(NTSymbol.F));
+
+        table.put(new TableEntry(NTSymbol.F, TSymbol.ID).hashCode(), List.of(NTSymbol.EXPR, NTSymbol.F1));
+        table.put(new TableEntry(NTSymbol.F, TSymbol.MINUS).hashCode(), List.of(NTSymbol.EXPR, NTSymbol.F1));
+        table.put(new TableEntry(NTSymbol.F, TSymbol.TRUE).hashCode(), List.of(NTSymbol.EXPR, NTSymbol.F1));
+        table.put(new TableEntry(NTSymbol.F, TSymbol.FALSE).hashCode(), List.of(NTSymbol.EXPR, NTSymbol.F1));
+        table.put(new TableEntry(NTSymbol.F, TSymbol.NULL).hashCode(), List.of(NTSymbol.EXPR, NTSymbol.F1));
+        table.put(new TableEntry(NTSymbol.F, TSymbol.NUMBER).hashCode(), List.of(NTSymbol.EXPR, NTSymbol.F1));
+        table.put(new TableEntry(NTSymbol.F, TSymbol.STRING).hashCode(), List.of(NTSymbol.EXPR, NTSymbol.F1));
+        table.put(new TableEntry(NTSymbol.F, TSymbol.NOT).hashCode(), List.of(NTSymbol.EXPR, NTSymbol.F1));
+        table.put(new TableEntry(NTSymbol.F, TSymbol.LEFT_PAREN).hashCode(), List.of(NTSymbol.EXPR, NTSymbol.F1));
+
+        table.put(new TableEntry(NTSymbol.F1, TSymbol.FROM).hashCode(),List.of(TSymbol.EPSILON));
+        table.put(new TableEntry(NTSymbol.F1, TSymbol.COMA).hashCode(),List.of(TSymbol.COMA, NTSymbol.EXPR, NTSymbol.F1));
+
+        table.put(new TableEntry(NTSymbol.T, TSymbol.ID).hashCode(), List.of(TSymbol.ID, NTSymbol.T2));
+
+        table.put(new TableEntry(NTSymbol.T1, TSymbol.ID).hashCode(), List.of(TSymbol.ID, NTSymbol.T2));
+
+        table.put(new TableEntry(NTSymbol.T2, TSymbol.COMA).hashCode(), List.of(TSymbol.EPSILON));
+        table.put(new TableEntry(NTSymbol.T2, TSymbol.ID).hashCode(), List.of(TSymbol.ID));
+        table.put(new TableEntry(NTSymbol.T2, TSymbol.WHERE).hashCode(), List.of(TSymbol.EPSILON));
+        table.put(new TableEntry(NTSymbol.T2, TSymbol.EOF).hashCode(), List.of(TSymbol.EPSILON));
+
+        table.put(new TableEntry(NTSymbol.T3, TSymbol.COMA).hashCode(), List.of(TSymbol.COMA, NTSymbol.T));
+        table.put(new TableEntry(NTSymbol.T3, TSymbol.WHERE).hashCode(), List.of(TSymbol.EPSILON));
+        table.put(new TableEntry(NTSymbol.T3, TSymbol.EOF).hashCode(), List.of(TSymbol.EPSILON));
+
+        table.put(new TableEntry(NTSymbol.W, TSymbol.WHERE).hashCode(), List.of(TSymbol.WHERE, NTSymbol.EXPR));
+        table.put(new TableEntry(NTSymbol.W, TSymbol.EOF).hashCode(), List.of(TSymbol.EPSILON));
+
         table.put(new TableEntry(NTSymbol.TERM1, TSymbol.FROM).hashCode(), List.of(TSymbol.EPSILON));
         table.put(new TableEntry(NTSymbol.TERM1, TSymbol.COMA).hashCode(), List.of(TSymbol.EPSILON));
         table.put(new TableEntry(NTSymbol.TERM1, TSymbol.OR).hashCode(), List.of(TSymbol.EPSILON));
