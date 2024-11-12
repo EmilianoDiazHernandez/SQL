@@ -84,7 +84,7 @@ public class Parser {
         table.put(new TableEntry(NTSymbol.F1, TSymbol.FROM).hashCode(),List.of(TSymbol.EPSILON));
         table.put(new TableEntry(NTSymbol.F1, TSymbol.COMA).hashCode(),List.of(TSymbol.COMA, NTSymbol.EXPR, NTSymbol.F1));
 
-        table.put(new TableEntry(NTSymbol.T, TSymbol.ID).hashCode(), List.of(TSymbol.ID, NTSymbol.T2));
+        table.put(new TableEntry(NTSymbol.T, TSymbol.ID).hashCode(), List.of(NTSymbol.T1, NTSymbol.T3));
 
         table.put(new TableEntry(NTSymbol.T1, TSymbol.ID).hashCode(), List.of(TSymbol.ID, NTSymbol.T2));
 
@@ -355,9 +355,9 @@ public class Parser {
                     break;
                 } else {
                     stack.pop();
-                    for (Symbol symbol : production) {
-                        if (!symbol.equals(TSymbol.EPSILON))
-                            stack.push(symbol);
+                    for (int i=production.size()-1; i>=0; i--) {
+                        if (!production.get(i).equals(TSymbol.EPSILON))
+                            stack.push(production.get(i));
                     }
                 }
             }
