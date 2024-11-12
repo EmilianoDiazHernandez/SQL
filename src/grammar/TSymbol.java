@@ -10,7 +10,7 @@ public enum TSymbol implements Symbol {
     LT, LE, GT, GE, EQ, NE,
     PLUS, MINUS, STAR, SLASH, STRING,
 
-    NUMBER,
+    NUMBER,EPSILON,
 
     // Final de cadena
     EOF
