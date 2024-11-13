@@ -251,15 +251,15 @@ public class Parser {
         table.put(new TableEntry(NTSymbol.LOGIC_OR1, TSymbol.FROM).hashCode(),List.of( TSymbol.EPSILON));
 
         //Para LogicAnd
-        table.put(new TableEntry(NTSymbol.LOGIC_AND, TSymbol.NOT).hashCode(),List.of(NTSymbol.EQUALITY));
-        table.put(new TableEntry(NTSymbol.LOGIC_AND, TSymbol.MINUS).hashCode(),List.of(NTSymbol.EQUALITY));
-        table.put(new TableEntry(NTSymbol.LOGIC_AND, TSymbol.TRUE).hashCode(),List.of(NTSymbol.EQUALITY));
-        table.put(new TableEntry(NTSymbol.LOGIC_AND, TSymbol.FALSE).hashCode(),List.of(NTSymbol.EQUALITY));
-        table.put(new TableEntry(NTSymbol.LOGIC_AND, TSymbol.NULL).hashCode(),List.of(NTSymbol.EQUALITY));
-        table.put(new TableEntry(NTSymbol.LOGIC_AND, TSymbol.NUMBER).hashCode(),List.of(NTSymbol.EQUALITY));
-        table.put(new TableEntry(NTSymbol.LOGIC_AND, TSymbol.STRING).hashCode(),List.of(NTSymbol.EQUALITY));
-        table.put(new TableEntry(NTSymbol.LOGIC_AND, TSymbol.ID).hashCode(),List.of(NTSymbol.EQUALITY));
-        table.put(new TableEntry(NTSymbol.LOGIC_AND, TSymbol.LEFT_PAREN).hashCode(),List.of(NTSymbol.EQUALITY));
+        table.put(new TableEntry(NTSymbol.LOGIC_AND, TSymbol.NOT).hashCode(),List.of(NTSymbol.EQUALITY, NTSymbol.LOGIC_AND1));
+        table.put(new TableEntry(NTSymbol.LOGIC_AND, TSymbol.MINUS).hashCode(),List.of(NTSymbol.EQUALITY, NTSymbol.LOGIC_AND1));
+        table.put(new TableEntry(NTSymbol.LOGIC_AND, TSymbol.TRUE).hashCode(),List.of(NTSymbol.EQUALITY, NTSymbol.LOGIC_AND1));
+        table.put(new TableEntry(NTSymbol.LOGIC_AND, TSymbol.FALSE).hashCode(),List.of(NTSymbol.EQUALITY, NTSymbol.LOGIC_AND1));
+        table.put(new TableEntry(NTSymbol.LOGIC_AND, TSymbol.NULL).hashCode(),List.of(NTSymbol.EQUALITY, NTSymbol.LOGIC_AND1));
+        table.put(new TableEntry(NTSymbol.LOGIC_AND, TSymbol.NUMBER).hashCode(),List.of(NTSymbol.EQUALITY, NTSymbol.LOGIC_AND1));
+        table.put(new TableEntry(NTSymbol.LOGIC_AND, TSymbol.STRING).hashCode(),List.of(NTSymbol.EQUALITY, NTSymbol.LOGIC_AND1));
+        table.put(new TableEntry(NTSymbol.LOGIC_AND, TSymbol.ID).hashCode(),List.of(NTSymbol.EQUALITY, NTSymbol.LOGIC_AND1));
+        table.put(new TableEntry(NTSymbol.LOGIC_AND, TSymbol.LEFT_PAREN).hashCode(),List.of(NTSymbol.EQUALITY, NTSymbol.LOGIC_AND1));
 
         //Para LogicAnd1
         table.put(new TableEntry(NTSymbol.LOGIC_AND1, TSymbol.AND).hashCode(),List.of( TSymbol.AND,NTSymbol.LOGIC_AND));
@@ -270,16 +270,16 @@ public class Parser {
         table.put(new TableEntry(NTSymbol.LOGIC_AND1, TSymbol.OR).hashCode(),List.of( TSymbol.EPSILON));
 
         //Para Equality
-        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.NOT).hashCode(),List.of(NTSymbol.COMPARISON));
-        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.MINUS).hashCode(),List.of(NTSymbol.COMPARISON));
-        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.TRUE).hashCode(),List.of(NTSymbol.COMPARISON));
-        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.FALSE).hashCode(),List.of(NTSymbol.COMPARISON));
-        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.NULL).hashCode(),List.of(NTSymbol.COMPARISON));
-        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.NUMBER).hashCode(),List.of(NTSymbol.COMPARISON));
-        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.STRING).hashCode(),List.of(NTSymbol.COMPARISON));
-        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.ID).hashCode(),List.of(NTSymbol.COMPARISON));
-        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.LEFT_PAREN).hashCode(),List.of(NTSymbol.COMPARISON));
-        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.OR).hashCode(),List.of(NTSymbol.COMPARISON));
+        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.NOT).hashCode(),List.of(NTSymbol.COMPARISON, NTSymbol.EQUALITY1));
+        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.MINUS).hashCode(),List.of(NTSymbol.COMPARISON, NTSymbol.EQUALITY1));
+        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.TRUE).hashCode(),List.of(NTSymbol.COMPARISON, NTSymbol.EQUALITY1));
+        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.FALSE).hashCode(),List.of(NTSymbol.COMPARISON, NTSymbol.EQUALITY1));
+        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.NULL).hashCode(),List.of(NTSymbol.COMPARISON, NTSymbol.EQUALITY1));
+        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.NUMBER).hashCode(),List.of(NTSymbol.COMPARISON, NTSymbol.EQUALITY1));
+        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.STRING).hashCode(),List.of(NTSymbol.COMPARISON, NTSymbol.EQUALITY1));
+        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.ID).hashCode(),List.of(NTSymbol.COMPARISON, NTSymbol.EQUALITY1));
+        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.LEFT_PAREN).hashCode(),List.of(NTSymbol.COMPARISON, NTSymbol.EQUALITY1));
+        table.put(new TableEntry(NTSymbol.EQUALITY, TSymbol.OR).hashCode(),List.of(NTSymbol.COMPARISON, NTSymbol.EQUALITY1));
 
         //Para Equality1
         table.put(new TableEntry(NTSymbol.EQUALITY1, TSymbol.NE).hashCode(),List.of( TSymbol.NE,NTSymbol.EQUALITY));
@@ -292,16 +292,15 @@ public class Parser {
         table.put(new TableEntry(NTSymbol.EQUALITY1, TSymbol.AND).hashCode(),List.of( TSymbol.EPSILON));
 
         //Para Comparison
-        table.put(new TableEntry(NTSymbol.COMPARISON, TSymbol.NOT).hashCode(),List.of(NTSymbol.TERM));
-        table.put(new TableEntry(NTSymbol.COMPARISON, TSymbol.MINUS).hashCode(),List.of(NTSymbol.TERM));
-        table.put(new TableEntry(NTSymbol.COMPARISON, TSymbol.TRUE).hashCode(),List.of(NTSymbol.TERM));
-        table.put(new TableEntry(NTSymbol.COMPARISON, TSymbol.FALSE).hashCode(),List.of(NTSymbol.TERM));
-        table.put(new TableEntry(NTSymbol.COMPARISON, TSymbol.NULL).hashCode(),List.of(NTSymbol.TERM));
-        table.put(new TableEntry(NTSymbol.COMPARISON, TSymbol.NUMBER).hashCode(),List.of(NTSymbol.TERM));
-        table.put(new TableEntry(NTSymbol.COMPARISON, TSymbol.STRING).hashCode(),List.of(NTSymbol.TERM));
-        table.put(new TableEntry(NTSymbol.COMPARISON, TSymbol.ID).hashCode(),List.of(NTSymbol.TERM));
-        table.put(new TableEntry(NTSymbol.COMPARISON, TSymbol.LEFT_PAREN).hashCode(),List.of(NTSymbol.TERM));
-        table.put(new TableEntry(NTSymbol.COMPARISON, TSymbol.OR).hashCode(),List.of(NTSymbol.COMPARISON));
+        table.put(new TableEntry(NTSymbol.COMPARISON, TSymbol.NOT).hashCode(),List.of(NTSymbol.TERM, NTSymbol.COMPARISON1));
+        table.put(new TableEntry(NTSymbol.COMPARISON, TSymbol.MINUS).hashCode(),List.of(NTSymbol.TERM, NTSymbol.COMPARISON1));
+        table.put(new TableEntry(NTSymbol.COMPARISON, TSymbol.TRUE).hashCode(),List.of(NTSymbol.TERM, NTSymbol.COMPARISON1));
+        table.put(new TableEntry(NTSymbol.COMPARISON, TSymbol.FALSE).hashCode(),List.of(NTSymbol.TERM, NTSymbol.COMPARISON1));
+        table.put(new TableEntry(NTSymbol.COMPARISON, TSymbol.NULL).hashCode(),List.of(NTSymbol.TERM, NTSymbol.COMPARISON1));
+        table.put(new TableEntry(NTSymbol.COMPARISON, TSymbol.NUMBER).hashCode(),List.of(NTSymbol.TERM, NTSymbol.COMPARISON1));
+        table.put(new TableEntry(NTSymbol.COMPARISON, TSymbol.STRING).hashCode(),List.of(NTSymbol.TERM, NTSymbol.COMPARISON1));
+        table.put(new TableEntry(NTSymbol.COMPARISON, TSymbol.ID).hashCode(),List.of(NTSymbol.TERM, NTSymbol.COMPARISON1));
+        table.put(new TableEntry(NTSymbol.COMPARISON, TSymbol.LEFT_PAREN).hashCode(),List.of(NTSymbol.TERM, NTSymbol.COMPARISON1));
 
         //Para Comparison1 DUDA en los simbolos
         table.put(new TableEntry(NTSymbol.COMPARISON1, TSymbol.GT).hashCode(),List.of( TSymbol.GT,NTSymbol.COMPARISON));
@@ -318,15 +317,15 @@ public class Parser {
         table.put(new TableEntry(NTSymbol.COMPARISON1, TSymbol.COMA).hashCode(),List.of( TSymbol.EPSILON));
 
         //Para Term
-        table.put(new TableEntry(NTSymbol.TERM, TSymbol.NOT).hashCode(),List.of(NTSymbol.FACTOR));
-        table.put(new TableEntry(NTSymbol.TERM, TSymbol.MINUS).hashCode(),List.of(NTSymbol.FACTOR));
-        table.put(new TableEntry(NTSymbol.TERM, TSymbol.TRUE).hashCode(),List.of(NTSymbol.FACTOR));
-        table.put(new TableEntry(NTSymbol.TERM, TSymbol.FALSE).hashCode(),List.of(NTSymbol.FACTOR));
-        table.put(new TableEntry(NTSymbol.TERM, TSymbol.NULL).hashCode(),List.of(NTSymbol.FACTOR));
-        table.put(new TableEntry(NTSymbol.TERM, TSymbol.NUMBER).hashCode(),List.of(NTSymbol.FACTOR));
-        table.put(new TableEntry(NTSymbol.TERM, TSymbol.STRING).hashCode(),List.of(NTSymbol.FACTOR));
-        table.put(new TableEntry(NTSymbol.TERM, TSymbol.ID).hashCode(),List.of(NTSymbol.FACTOR));
-        table.put(new TableEntry(NTSymbol.TERM, TSymbol.LEFT_PAREN).hashCode(),List.of(NTSymbol.FACTOR));
+        table.put(new TableEntry(NTSymbol.TERM, TSymbol.NOT).hashCode(),List.of(NTSymbol.FACTOR,NTSymbol.TERM1));
+        table.put(new TableEntry(NTSymbol.TERM, TSymbol.MINUS).hashCode(),List.of(NTSymbol.FACTOR,NTSymbol.TERM1));
+        table.put(new TableEntry(NTSymbol.TERM, TSymbol.TRUE).hashCode(),List.of(NTSymbol.FACTOR,NTSymbol.TERM1));
+        table.put(new TableEntry(NTSymbol.TERM, TSymbol.FALSE).hashCode(),List.of(NTSymbol.FACTOR,NTSymbol.TERM1));
+        table.put(new TableEntry(NTSymbol.TERM, TSymbol.NULL).hashCode(),List.of(NTSymbol.FACTOR,NTSymbol.TERM1));
+        table.put(new TableEntry(NTSymbol.TERM, TSymbol.NUMBER).hashCode(),List.of(NTSymbol.FACTOR,NTSymbol.TERM1));
+        table.put(new TableEntry(NTSymbol.TERM, TSymbol.STRING).hashCode(),List.of(NTSymbol.FACTOR,NTSymbol.TERM1));
+        table.put(new TableEntry(NTSymbol.TERM, TSymbol.ID).hashCode(),List.of(NTSymbol.FACTOR,NTSymbol.TERM1));
+        table.put(new TableEntry(NTSymbol.TERM, TSymbol.LEFT_PAREN).hashCode(),List.of(NTSymbol.FACTOR,NTSymbol.TERM1));
 
 
 
