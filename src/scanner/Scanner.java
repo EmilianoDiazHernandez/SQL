@@ -73,7 +73,7 @@ public class Scanner {
                     break;
                 case 1:
                     if (character == '=') tokens.add(new Token(TSymbol.LE, "<=", i));
-                    else if(character == '>') tokens.add(new Token(TSymbol.DISTINCT, "<>", i));
+                    else if(character == '>') tokens.add(new Token(TSymbol.NE, "<>", i));
                     else {
                         i--;
                         tokens.add(new Token(TSymbol.LT, "<", i));
