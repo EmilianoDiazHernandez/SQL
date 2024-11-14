@@ -352,7 +352,6 @@ public class Parser {
                     }
                 }
             }
-            System.out.println(X + "->" + lookahead.type);
             X = stack.peek();
         }
     }
