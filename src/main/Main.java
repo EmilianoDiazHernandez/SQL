@@ -1,6 +1,7 @@
 package main;
 
 import parser.Parser;
+import parser.ParserState;
 import scanner.*;
 
 import java.io.BufferedReader;
@@ -35,12 +36,10 @@ public class Main {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
 
-        /*for(Token token : tokens){
-            System.out.println(token);
-        }*/
-
         Parser parser = new Parser(tokens);
-        parser.parse();
+        ParserState parsingResult = parser.parse();
+
+        System.out.println(parsingResult.toString());
     }
 
     /*

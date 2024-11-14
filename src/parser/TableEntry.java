@@ -11,7 +11,7 @@ public class TableEntry {
 
     TSymbol terminal;
 
-    TableEntry(NTSymbol nonTerminal, TSymbol terminal) {
+    public TableEntry(NTSymbol nonTerminal, TSymbol terminal) {
         this.nonTerminal = nonTerminal;
         this.terminal = terminal;
     }
