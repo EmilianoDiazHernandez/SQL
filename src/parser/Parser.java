@@ -74,6 +74,6 @@ public class Parser {
             X = stack.peek();
         }
 
-        return X.equals(TSymbol.EOF) ? ParserState.FINISH : ParserState.ERROR;
+        return X.equals(TSymbol.EOF) && lookahead.type== TSymbol.EOF? ParserState.FINISH : ParserState.ERROR;
     }
 }
