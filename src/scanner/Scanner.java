@@ -2,6 +2,10 @@ package scanner;
 
 import grammar.TSymbol;
 import main.Main;
+import scanner.token.ControlStructure;
+import scanner.token.Operand;
+import scanner.token.Operator;
+import scanner.token.Token;
 
 import java.util.*;
 
@@ -12,21 +16,26 @@ public class Scanner {
     private final List<Token> tokens = new ArrayList<>();
 
     private static final Map<String, TSymbol> reservedWords;
+    private static final Map<String, TSymbol> reservedWordsOperators;
+    private static final Map<String, TSymbol> reservedWordsControlStructure;
 
     static {
         reservedWords = new HashMap<>();
-
-        reservedWords.put("AND", TSymbol.AND);
-        reservedWords.put("DISTINCT", TSymbol.DISTINCT);
         reservedWords.put("FALSE", TSymbol.FALSE);
-        reservedWords.put("FROM", TSymbol.FROM);
-        reservedWords.put("IS", TSymbol.IS);
-        reservedWords.put("NOT", TSymbol.NOT);
-        reservedWords.put("NULL", TSymbol.NULL);
-        reservedWords.put("OR", TSymbol.OR);
-        reservedWords.put("SELECT", TSymbol.SELECT);
         reservedWords.put("TRUE", TSymbol.TRUE);
-        reservedWords.put("WHERE", TSymbol.WHERE);
+        reservedWords.put("NULL", TSymbol.NULL);
+
+        reservedWordsOperators = new HashMap<>();
+        reservedWordsOperators.put("DISTINCT", TSymbol.DISTINCT);
+        reservedWordsOperators.put("NOT", TSymbol.NOT);
+        reservedWordsOperators.put("AND", TSymbol.AND);
+        reservedWordsOperators.put("OR", TSymbol.OR);
+        reservedWordsOperators.put("IS", TSymbol.IS);
+
+        reservedWordsControlStructure = new HashMap<>();
+        reservedWordsControlStructure.put("SELECT", TSymbol.SELECT);
+        reservedWordsControlStructure.put("WHERE", TSymbol.WHERE);
+        reservedWordsControlStructure.put("FROM", TSymbol.FROM);
     }
 
     public Scanner(String source) {
@@ -45,14 +54,14 @@ public class Scanner {
                 case 0:
                     switch (character) {
                         case ' ': case '\t': case '\n': break;
-                        case '+': tokens.add(new Token(TSymbol.PLUS, "+", i)); break;
-                        case '*': tokens.add(new Token(TSymbol.STAR, "*", i)); break;
+                        case '+': tokens.add(new Operator(TSymbol.PLUS, "+", i, 2)); break;
+                        case '*': tokens.add(new Operator(TSymbol.STAR, "*", i, 2)); break;
                         case ',': tokens.add(new Token(TSymbol.COMA, ",", i)); break;
                         case ';': tokens.add(new Token(TSymbol.SEMICOLON, ";", i)); break;
                         case '.': tokens.add(new Token(TSymbol.DOT, ".", i)); break;
                         case '(': tokens.add(new Token(TSymbol.LEFT_PAREN, "(", i)); break;
                         case ')': tokens.add(new Token(TSymbol.RIGHT_PAREN, ")", i)); break;
-                        case '=': tokens.add(new Token(TSymbol.EQ, "=", i)); break;
+                        case '=': tokens.add(new Operator(TSymbol.EQ, "=", i, 2)); break;
                         case '<': state = 1; break;
                         case '>': state = 2; break;
                         case '-': state = 8; break;
@@ -72,26 +81,35 @@ public class Scanner {
                     }
                     break;
                 case 1:
-                    if (character == '=') tokens.add(new Token(TSymbol.LE, "<=", i));
-                    else if(character == '>') tokens.add(new Token(TSymbol.NE, "<>", i));
+                    if (character == '=') tokens.add(new Operator(TSymbol.LE, "<=", i, 2));
+                    else if(character == '>') tokens.add(new Operator(TSymbol.NE, "<>", i, 2));
                     else {
                         i--;
-                        tokens.add(new Token(TSymbol.LT, "<", i));
+                        tokens.add(new Operator(TSymbol.LT, "<", i, 2));
                     }
                     state = 0;
                     break;
                 case 2:
-                    if (character == '=') tokens.add(new Token(TSymbol.GE, ">=", i));
+                    if (character == '=') tokens.add(new Operator(TSymbol.GE, ">=", i, 2));
                     else {
                         i--;
-                        tokens.add(new Token(TSymbol.GT, ">", i));
+                        tokens.add(new Operator(TSymbol.GT, ">", i, 2));
                     }
                     state = 0;
                     break;
                 case 3:
                     if(Character.isLetter(character) || Character.isDigit(character) || character == '_') lexeme.append(character);
-                    else{
-                        tokens.add(new Token(reservedWords.getOrDefault(lexeme.toString().toUpperCase(), TSymbol.ID), lexeme.toString(), i));
+                    else {
+                        String lexemeU = lexeme.toString().toUpperCase();
+                        if (reservedWords.containsKey(lexemeU))
+                            tokens.add(new Operand(reservedWords.get(lexemeU), lexeme.toString(), i));
+                        else if (reservedWordsOperators.containsKey(lexemeU))
+                                tokens.add(new Operator(reservedWordsOperators.get(lexemeU), lexeme.toString(), i,
+                                        lexemeU.equals("DISTINCT") || lexemeU.equals("NOT") ? 1:2));
+                        else if (reservedWordsControlStructure.containsKey(lexemeU))
+                            tokens.add(new ControlStructure(reservedWordsControlStructure.get(lexemeU), lexeme.toString(), i));
+                        else
+                            tokens.add(new Operand(TSymbol.ID, lexeme.toString(), i));
                         lexeme = new StringBuilder();
                         state = 0;
                         i--;
@@ -106,7 +124,7 @@ public class Scanner {
                         lexeme.append(character);
                         state = 6;
                     }else {
-                        tokens.add(new Token(TSymbol.NUMBER, lexeme.toString(), i));
+                        tokens.add(new Operand(TSymbol.NUMBER, lexeme.toString(), i));
                         lexeme = new StringBuilder();
                         state = 0;
                         i--;
@@ -118,7 +136,7 @@ public class Scanner {
                         lexeme.append(character);
                         state = 6;
                     }else {
-                        tokens.add(new Token(TSymbol.NUMBER, lexeme.toString(), i));
+                        tokens.add(new Operand(TSymbol.NUMBER, lexeme.toString(), i));
                         lexeme = new StringBuilder();
                         state = 0;
                         i--;
@@ -129,7 +147,7 @@ public class Scanner {
                         lexeme.append(character);
                         state = 7;
                     }else {
-                        tokens.add(new Token(TSymbol.NUMBER, lexeme.toString(), i));
+                        tokens.add(new Operand(TSymbol.NUMBER, lexeme.toString(), i));
                         lexeme = new StringBuilder();
                         state = 0;
                         i--;
@@ -138,7 +156,7 @@ public class Scanner {
                 case 7:
                     if(Character.isDigit(character)) lexeme.append(character);
                     else {
-                        tokens.add(new Token(TSymbol.NUMBER, lexeme.toString(), i));
+                        tokens.add(new Operand(TSymbol.NUMBER, lexeme.toString(), i));
                         lexeme = new StringBuilder();
                         state = 0;
                         i--;
@@ -147,7 +165,7 @@ public class Scanner {
                 case 8:
                     if(character == '-') state = 9;
                     else {
-                        tokens.add(new Token(TSymbol.MINUS, "-", i));
+                        tokens.add(new Operator(TSymbol.MINUS, "-", i, 2));
                         state = 0;
                         i--;
                     }
@@ -158,7 +176,7 @@ public class Scanner {
                 case 10:
                     if(character == '*') state = 11;
                     else {
-                        tokens.add(new Token(TSymbol.SLASH, "/", i));
+                        tokens.add(new Operator(TSymbol.SLASH, "/", i, 2));
                         state = 0;
                         i--;
                     }
@@ -170,7 +188,7 @@ public class Scanner {
                     break;
                 case 12:
                     if(character == '"' || character == '\''){
-                        tokens.add(new Token(TSymbol.STRING, lexeme.toString(), i));
+                        tokens.add(new Operand(TSymbol.STRING, lexeme.toString(), i));
                         lexeme = new StringBuilder();
                         state = 0;
                     }else lexeme.append(character);

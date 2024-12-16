@@ -4,7 +4,7 @@ import grammar.NTSymbol;
 import grammar.ProductionTable;
 import grammar.Symbol;
 import grammar.TSymbol;
-import scanner.Token;
+import scanner.token.Token;
 
 import java.util.*;
 
@@ -74,6 +74,11 @@ public class Parser {
             X = stack.peek();
         }
 
-        return X.equals(TSymbol.EOF) && lookahead.type== TSymbol.EOF? ParserState.FINISH : ParserState.ERROR;
+        if (X.equals(TSymbol.EOF) && lookahead.type == TSymbol.EOF) {
+            List<Token> postfix = Postfix.convert(tokens);
+            System.out.println(postfix);
+            return ParserState.FINISH;
+        }
+        return ParserState.ERROR;
     }
 }

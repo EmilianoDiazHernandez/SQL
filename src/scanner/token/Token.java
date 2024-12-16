@@ -1,4 +1,4 @@
-package scanner;
+package scanner.token;
 
 import grammar.TSymbol;
 
@@ -20,6 +20,6 @@ public class Token {
     }
 
     public String toString() {
-        return "tipo: " + type + "\tlexema: " + lexeme + "\t linea: " + line;
+        return /*"tipo: " + type + "\tlexema: " +*/ lexeme /*+ "\t linea: " + line*/;
     }
 }
