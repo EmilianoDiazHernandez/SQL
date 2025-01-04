@@ -4,6 +4,8 @@ import grammar.NTSymbol;
 import grammar.ProductionTable;
 import grammar.Symbol;
 import grammar.TSymbol;
+import parser.ast.Tree;
+import parser.ast.nodes.NodeQuery;
 import scanner.token.Token;
 
 import java.util.*;
@@ -43,7 +45,7 @@ public class Parser {
         }
     }
 
-    public ParserState parse() {
+    public NodeQuery parse() {
         Stack<Symbol> stack = new Stack<>();
         stack.push(TSymbol.EOF);
         stack.push(NTSymbol.Q);
@@ -77,8 +79,14 @@ public class Parser {
         if (X.equals(TSymbol.EOF) && lookahead.type == TSymbol.EOF) {
             List<Token> postfix = Postfix.convert(tokens);
             System.out.println(postfix);
-            return ParserState.FINISH;
+            state = ParserState.FINISH;
+
+            Tree tree = new Tree(Postfix.convert(tokens));
+            tree.printAST(tree.root, 0);
+            return tree.root;
         }
-        return ParserState.ERROR;
+        state = ParserState.ERROR;
+        System.out.println("ERROR");
+        return null;
     }
 }

@@ -44,6 +44,7 @@ public class Postfix {
         while (!stack.isEmpty())
             postfix.add(stack.pop());
 
+        postfix.add(new Token(TSymbol.EOF, "EOF", infix.size()));
         return postfix;
     }
 }

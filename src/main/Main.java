@@ -1,7 +1,7 @@
 package main;
 
 import parser.Parser;
-import parser.ParserState;
+import parser.ast.nodes.NodeQuery;
 import scanner.*;
 import scanner.token.Token;
 
@@ -20,27 +20,26 @@ public class Main {
         Prompt();
     }
 
-    private static void Prompt() throws IOException{
+    private static void Prompt() throws IOException {
         InputStreamReader input = new InputStreamReader(System.in);
         BufferedReader reader = new BufferedReader(input);
 
-        for(;;){
+        for (; ; ) {
             System.out.print(">>>");
             String statement = reader.readLine();
-            if(statement == null) break; // Ctrl + D
+            if (statement == null) break; // Ctrl + D
             ejecutar(statement);
             error = false;
         }
     }
 
-    private static void ejecutar(String source){
+    private static void ejecutar(String source) {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
 
         Parser parser = new Parser(tokens);
-        ParserState parsingResult = parser.parse();
+        NodeQuery query = parser.parse();
 
-        System.out.println(parsingResult.toString());
     }
 
     /*
@@ -48,11 +47,11 @@ public class Main {
     para reportar los errores:
     Interprete.error(....);
      */
-    public static void error(int linea, String mensaje){
+    public static void error(int linea, String mensaje) {
         reportar(linea, "", mensaje);
     }
 
-    private static void reportar(int linea, String donde, String mensaje){
+    private static void reportar(int linea, String donde, String mensaje) {
         System.err.println("[linea " + linea + "] Error " + donde + ": " + mensaje);
         error = true;
     }

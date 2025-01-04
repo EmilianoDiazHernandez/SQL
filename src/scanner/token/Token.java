@@ -20,6 +20,7 @@ public class Token {
     }
 
     public String toString() {
-        return /*"tipo: " + type + "\tlexema: " +*/ lexeme /*+ "\t linea: " + line*/;
+        //return "tipo: " + type + "\tlexema: \t linea: " + line;
+        return lexeme;
     }
 }
