@@ -15,30 +15,79 @@ public class NodeExp {
         this.right = null;
     }
 
-    public Token solve(NodeExp node) {
-        if (node.left == null && node.right == null) return node.value;
+    public void solve() {
+        // Si el nodo es hoja, no hacemos nada.
+        if (left == null && right == null) {
+            return;
+        }
 
-        Token left = solve(node.left);
-        Token right = solve(node.right);
+        // Resolvemos recursivamente los nodos izquierdo y derecho si existen.
+        if (left != null) {
+            left.solve();
+        }
+        if (right != null) {
+            right.solve();
+        }
 
-        return evaluateOperation(left, right, node.value);
+        // Actualizamos el valor del nodo con el resultado de evaluar la operación.
+        this.value = evaluateOperation(
+                left != null ? left.value : null,
+                right != null ? right.value : null,
+                this.value
+        );
     }
 
-    public Token evaluateOperation(Token left, Token right, Token operator) {
-        return switch (operator.type) {
-            case PLUS ->
-                    new Operand(TSymbol.NUMBER, String.valueOf(Double.parseDouble(left.lexeme) + Double.parseDouble(right.lexeme)));
-            case MINUS ->
-                    new Operand(TSymbol.NUMBER, String.valueOf(Double.parseDouble(left.lexeme) - Double.parseDouble(right.lexeme)));
-            case STAR ->
-                    new Operand(TSymbol.NUMBER, String.valueOf(Double.parseDouble(left.lexeme) * Double.parseDouble(right.lexeme)));
-            case SLASH -> {
+    private Token evaluateOperation(Token left, Token right, Token operator) {
+        switch (operator.type) {
+            // Operadores aritméticos
+            case PLUS:
+                return new Operand(TSymbol.NUMBER,
+                        String.valueOf(Double.parseDouble(left.lexeme) + Double.parseDouble(right.lexeme)));
+            case MINUS:
+                return new Operand(TSymbol.NUMBER,
+                        String.valueOf(Double.parseDouble(left.lexeme) - Double.parseDouble(right.lexeme)));
+            case STAR:
+                return new Operand(TSymbol.NUMBER,
+                        String.valueOf(Double.parseDouble(left.lexeme) * Double.parseDouble(right.lexeme)));
+            case SLASH:
                 if (Double.parseDouble(right.lexeme) == 0) {
                     throw new ArithmeticException("División por cero.");
                 }
-                yield new Operand(TSymbol.NUMBER, String.valueOf(Double.parseDouble(left.lexeme) / Double.parseDouble(right.lexeme)));
-            }
-            default -> throw new UnsupportedOperationException("Operador no soportado: " + operator.type);
-        };
+                return new Operand(TSymbol.NUMBER,
+                        String.valueOf(Double.parseDouble(left.lexeme) / Double.parseDouble(right.lexeme)));
+
+            // Operadores de comparación
+            case GT: // >
+                return new Operand(TSymbol.BOOLEAN,
+                        String.valueOf(Double.parseDouble(left.lexeme) > Double.parseDouble(right.lexeme)));
+            case LT: // <
+                return new Operand(TSymbol.BOOLEAN,
+                        String.valueOf(Double.parseDouble(left.lexeme) < Double.parseDouble(right.lexeme)));
+            case EQ: // =
+                return new Operand(TSymbol.BOOLEAN,
+                        String.valueOf(left.lexeme.equals(right.lexeme)));
+            case GE: // >=
+                return new Operand(TSymbol.BOOLEAN,
+                        String.valueOf(Double.parseDouble(left.lexeme) >= Double.parseDouble(right.lexeme)));
+            case LE: // <=
+                return new Operand(TSymbol.BOOLEAN,
+                        String.valueOf(Double.parseDouble(left.lexeme) <= Double.parseDouble(right.lexeme)));
+
+            // Operadores lógicos
+            case AND:
+                return new Operand(TSymbol.BOOLEAN,
+                        String.valueOf(Boolean.parseBoolean(left.lexeme) && Boolean.parseBoolean(right.lexeme)));
+            case NOT:
+                return new Operand(TSymbol.BOOLEAN,
+                        String.valueOf(!Boolean.parseBoolean(left.lexeme)));
+
+            // Operador de control
+            case DISTINCT:
+                return new Operand(TSymbol.BOOLEAN,
+                        String.valueOf(!left.lexeme.equals(right.lexeme)));
+
+            default:
+                throw new UnsupportedOperationException("Operador no soportado: " + operator.type);
+        }
     }
 }

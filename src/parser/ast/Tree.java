@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import static grammar.TSymbol.*;
+
 public class Tree {
     public final NodeQuery root;
 
@@ -30,10 +32,10 @@ public class Tree {
                         ArrayList<NodeExp> expressions = new ArrayList<>();
                         ArrayList<Token> expression = new ArrayList<>();
                         i++;
-                        while (query.get(i).type != TSymbol.FROM) {
+                        while (query.get(i).type != FROM) {
                             expression.add(query.get(i));
 
-                            if (query.get(i).type == TSymbol.COMA || query.get(i + 1).type == TSymbol.FROM) {
+                            if (query.get(i).type == COMA || query.get(i + 1).type == FROM) {
                                 expressions.add(buildExpression(expression));
                                 expression.clear();
                             }
@@ -45,10 +47,10 @@ public class Tree {
                         ArrayList<NodeTable> tables = new ArrayList<>();
                         ArrayList<Token> table = new ArrayList<>();
                         i++;
-                        while (query.get(i).type != TSymbol.WHERE && query.get(i).type != TSymbol.EOF) {
+                        while (query.get(i).type != WHERE && query.get(i).type != EOF) {
                             table.add(query.get(i));
 
-                            if (query.get(i).type == TSymbol.COMA || query.get(i + 1).type == TSymbol.WHERE || query.get(i + 1).type == TSymbol.EOF) {
+                            if (query.get(i).type == COMA || query.get(i + 1).type == WHERE || query.get(i + 1).type == EOF) {
                                 tables.add(buildTable(table));
                                 table.clear();
                             }
@@ -60,12 +62,15 @@ public class Tree {
                         ArrayList<Token> condition = new ArrayList<>();
                         i++;
                         while (i < query.size()) {
-                            if (query.get(i).type != TSymbol.EOF)
+                            if (query.get(i).type != EOF)
                                 condition.add(query.get(i));
                             else
                                 where = new NodeWhere(buildExpression(condition));
                             i++;
                         }
+                        break;
+                    case EOF:
+                        i++;
                         break;
                 }
             } else {
@@ -77,6 +82,9 @@ public class Tree {
     }
 
     private NodeExp buildExpression(List<Token> expression) {
+        if (expression.size() == 1 && expression.get(0).type == STAR)
+            return new NodeExp(expression.get(0));
+
         Stack<NodeExp> stack = new Stack<>();
 
         for (Token token : expression) {

@@ -4,6 +4,7 @@ import parser.Parser;
 import parser.ast.nodes.NodeQuery;
 import scanner.*;
 import scanner.token.Token;
+import semantic.Semantic;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,6 +41,7 @@ public class Main {
         Parser parser = new Parser(tokens);
         NodeQuery query = parser.parse();
 
+        Semantic semantic = new Semantic(query);
     }
 
     /*
