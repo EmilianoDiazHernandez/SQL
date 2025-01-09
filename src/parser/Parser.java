@@ -77,6 +77,8 @@ public class Parser {
         }
 
         if (X.equals(TSymbol.EOF) && lookahead.type == TSymbol.EOF) {
+            System.out.println(tokens);
+            System.out.println(Postfix.convert(tokens));
             state = ParserState.FINISH;
 
             Tree tree = new Tree(Postfix.convert(tokens));

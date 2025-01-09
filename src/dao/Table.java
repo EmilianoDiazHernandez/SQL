@@ -1,6 +1,5 @@
 package dao;
 
-import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -9,15 +8,15 @@ import java.util.*;
 public class Table {
 
     public String name;
-    private final List<List<String>> content;
+    public final List<List<String>> content;
 
-    public Table(String name, String filePath) throws IOException {
+    public Table(String name, String filePath) {
         this.name = name;
         this.content = loadDataFromCSV(filePath);
         loadDataFromCSV(filePath);
     }
 
-    private List<List<String>> loadDataFromCSV(String filePath) throws IOException {
+    private List<List<String>> loadDataFromCSV(String filePath) {
         List<List<String>> tableContent = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
@@ -27,6 +26,8 @@ public class Table {
                 List<String> row = new ArrayList<>(Arrays.asList(values));
                 tableContent.add(row);
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
         }
 
         return tableContent;
@@ -43,11 +44,7 @@ public class Table {
     }
 
     public static void main(String[] args) {
-        try {
-            Table table = new Table("Users", "db/t1.csv");
-            table.printTable();
-        } catch (IOException e) {
-            System.out.println("Table not found");
-        }
+        Table table = new Table("Users", "db/t1.csv");
+        table.printTable();
     }
 }

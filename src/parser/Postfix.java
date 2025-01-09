@@ -38,6 +38,8 @@ public class Postfix {
                 while (!stack.isEmpty())
                     postfix.add(stack.pop());
                 postfix.add(token);
+            } else if (token.type == TSymbol.DOT) {
+                postfix.add(token);
             }
         }
 

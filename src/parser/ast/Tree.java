@@ -1,6 +1,5 @@
 package parser.ast;
 
-import grammar.TSymbol;
 import parser.ast.nodes.*;
 import scanner.token.ControlStructure;
 import scanner.token.Operand;
@@ -21,6 +20,7 @@ public class Tree {
     }
 
     private NodeQuery buildTree(List<Token> query) {
+        String tableReference;
         NodeSelect select = null;
         NodeFrom from = null;
         NodeWhere where = null;
@@ -31,12 +31,16 @@ public class Tree {
                     case SELECT:
                         ArrayList<NodeExp> expressions = new ArrayList<>();
                         ArrayList<Token> expression = new ArrayList<>();
+                        tableReference = null;
                         i++;
                         while (query.get(i).type != FROM) {
                             expression.add(query.get(i));
 
+                            if (query.get(i).type == DOT) {
+                                tableReference = query.get(i - 1).lexeme;
+                            }
                             if (query.get(i).type == COMA || query.get(i + 1).type == FROM) {
-                                expressions.add(buildExpression(expression));
+                                expressions.add(buildExpression(expression, tableReference));
                                 expression.clear();
                             }
                             i++;
@@ -60,12 +64,15 @@ public class Tree {
                         break;
                     case WHERE:
                         ArrayList<Token> condition = new ArrayList<>();
+                        tableReference = null;
                         i++;
                         while (i < query.size()) {
-                            if (query.get(i).type != EOF)
+                            if (query.get(i).type == DOT)
+                                tableReference = query.get(i - 1).lexeme;
+                            else if (query.get(i).type != EOF)
                                 condition.add(query.get(i));
                             else
-                                where = new NodeWhere(buildExpression(condition));
+                                where = new NodeWhere(buildExpression(condition, tableReference));
                             i++;
                         }
                         break;
@@ -81,17 +88,17 @@ public class Tree {
         return new NodeQuery(select, from, where);
     }
 
-    private NodeExp buildExpression(List<Token> expression) {
+    private NodeExp buildExpression(List<Token> expression, String tableReference) {
         if (expression.size() == 1 && expression.get(0).type == STAR)
-            return new NodeExp(expression.get(0));
+            return new NodeExp(expression.get(0), tableReference);
 
         Stack<NodeExp> stack = new Stack<>();
 
         for (Token token : expression) {
             if (token instanceof Operand) {
-                stack.push(new NodeExp(token));
+                stack.push(new NodeExp(token, tableReference));
             } else if (token instanceof Operator) {
-                NodeExp node = new NodeExp(token);
+                NodeExp node = new NodeExp(token, tableReference);
 
                 node.right = stack.pop();
                 node.left = stack.pop();
@@ -142,7 +149,7 @@ public class Tree {
     public void printTree(NodeExp node, int depth) {
         if (node == null) return;
 
-        printIndent(node.value.lexeme, depth);
+        printIndent(node.tableName + "." + node.value.lexeme, depth);
         printTree(node.left, depth + 1);
         printTree(node.right, depth + 1);
     }
