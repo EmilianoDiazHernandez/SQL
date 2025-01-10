@@ -1,8 +1,11 @@
 package parser.ast.nodes;
 
-import grammar.TSymbol;
+import static grammar.TSymbol.*;
+
 import scanner.token.Operand;
 import scanner.token.Token;
+
+import java.util.HashMap;
 
 public class NodeExp {
     public Token value;
@@ -17,58 +20,64 @@ public class NodeExp {
         this.tableName = tableName;
     }
 
-    public void solve() {
+    public Token solve(HashMap<String, String> dataIds) {
         if (left == null && right == null) {
-            return;
+            String lexeme = value.lexeme;
+            if (value.type == ID)
+                lexeme = dataIds.get(value.lexeme);
+
+            return new Token(value.type, lexeme);
         }
 
-        if (left != null) {
-            left.solve();
-        }
-        if (right != null) {
-            right.solve();
-        }
+        Token solveLeft = null;
+        if (left != null)
+            solveLeft = left.solve(dataIds);
 
-        this.value = evaluateOperation(
-                left != null ? left.value : null,
-                right != null ? right.value : null,
-                this.value
-        );
+        Token solveRight = null;
+        if (right != null)
+            solveRight = right.solve(dataIds);
+
+        return evaluateOperation(solveLeft, solveRight, value);
     }
 
-    private Token evaluateOperation(Token left, Token right, Token operator) {
+    private Operand evaluateOperation(Token left, Token right, Token operator) {
         return switch (operator.type) {
-            case PLUS -> new Operand(TSymbol.NUMBER,
+            case PLUS -> new Operand(NUMBER,
                     String.valueOf(Double.parseDouble(left.lexeme) + Double.parseDouble(right.lexeme)));
-            case MINUS -> new Operand(TSymbol.NUMBER,
+            case MINUS -> new Operand(NUMBER,
                     String.valueOf(Double.parseDouble(left.lexeme) - Double.parseDouble(right.lexeme)));
-            case STAR -> new Operand(TSymbol.NUMBER,
+            case STAR -> new Operand(NUMBER,
                     String.valueOf(Double.parseDouble(left.lexeme) * Double.parseDouble(right.lexeme)));
             case SLASH -> {
                 if (Double.parseDouble(right.lexeme) == 0)
                     throw new ArithmeticException("division by zero.");
-                yield new Operand(TSymbol.NUMBER,
+                yield new Operand(NUMBER,
                         String.valueOf(Double.parseDouble(left.lexeme) / Double.parseDouble(right.lexeme)));
             }
 
-            case GT -> new Operand(TSymbol.BOOLEAN,
+            case GT -> new Operand(BOOLEAN,
                     String.valueOf(Double.parseDouble(left.lexeme) > Double.parseDouble(right.lexeme)));
-            case LT -> new Operand(TSymbol.BOOLEAN,
+            case LT -> new Operand(BOOLEAN,
                     String.valueOf(Double.parseDouble(left.lexeme) < Double.parseDouble(right.lexeme)));
-            case EQ -> new Operand(TSymbol.BOOLEAN,
+            case EQ -> new Operand(BOOLEAN,
                     String.valueOf(left.lexeme.equals(right.lexeme)));
-            case GE -> new Operand(TSymbol.BOOLEAN,
+            case NE -> new Operand(BOOLEAN,
+                    String.valueOf(!left.lexeme.equals(right.lexeme)));
+            case GE -> new Operand(BOOLEAN,
                     String.valueOf(Double.parseDouble(left.lexeme) >= Double.parseDouble(right.lexeme)));
-            case LE -> new Operand(TSymbol.BOOLEAN,
+            case LE -> new Operand(BOOLEAN,
                     String.valueOf(Double.parseDouble(left.lexeme) <= Double.parseDouble(right.lexeme)));
 
-            case AND -> new Operand(TSymbol.BOOLEAN,
+            case AND -> new Operand(BOOLEAN,
                     String.valueOf(Boolean.parseBoolean(left.lexeme) && Boolean.parseBoolean(right.lexeme)));
-            case NOT -> new Operand(TSymbol.BOOLEAN,
-                    String.valueOf(!Boolean.parseBoolean(left.lexeme)));
+            case OR -> new Operand(BOOLEAN,
+                    String.valueOf(Boolean.parseBoolean(left.lexeme) || Boolean.parseBoolean(right.lexeme)));
 
-            case DISTINCT -> new Operand(TSymbol.BOOLEAN,
+            case NOT -> new Operand(BOOLEAN,
+                    String.valueOf(!Boolean.parseBoolean(right .lexeme)));
+            case DISTINCT -> new Operand(BOOLEAN,
                     String.valueOf(!left.lexeme.equals(right.lexeme)));
+
             default -> throw new UnsupportedOperationException("Unsupported operator: " + operator.type);
         };
     }

@@ -3,9 +3,9 @@ package scanner.token;
 import grammar.TSymbol;
 
 public class Token {
-    public final TSymbol type;
-    public final String lexeme;
-    public final int line;
+    public TSymbol type;
+    public String lexeme;
+    public int line;
 
     public Token(TSymbol type, String lexeme, int line) {
         this.type = type;

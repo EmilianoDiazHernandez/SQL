@@ -46,7 +46,6 @@ public class Postfix {
         while (!stack.isEmpty())
             postfix.add(stack.pop());
 
-        postfix.add(new ControlStructure(TSymbol.EOF, "EOF", infix.size()));
         return postfix;
     }
 }

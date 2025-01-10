@@ -101,7 +101,8 @@ public class Tree {
                 NodeExp node = new NodeExp(token, tableReference);
 
                 node.right = stack.pop();
-                node.left = stack.pop();
+                if (((Operator) token).arity > 1)
+                    node.left = stack.pop();
 
                 stack.push(node);
             }

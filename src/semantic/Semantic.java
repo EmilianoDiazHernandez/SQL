@@ -1,10 +1,10 @@
 package semantic;
 
 import dao.Table;
-import parser.ast.nodes.NodeExp;
 import parser.ast.nodes.NodeQuery;
 import parser.ast.nodes.NodeTable;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,13 +29,18 @@ public class Semantic {
         }
         Objects.requireNonNull(t).printTable();
 
-        for (List<String> row : t.content) {
-            //CODIGO A COMPLETAR
-        }
+        List<String> ids = t.content.get(0);
+        HashMap<String, String> dataIds = new HashMap<>();
 
-        /*for (NodeExp exp : query.select.columns) {
-            exp.solve();
-        }*/
+        for (List<String> row : t.content.subList(1, t.content.size())) {
+            for (String cell : row)
+                dataIds.put(ids.get(row.indexOf(cell)), cell);
+
+            if (query.where != null)
+                if (query.where.condition.solve(dataIds).lexeme.equals("true"))
+                    System.out.println(row);
+
+        }
 
     }
 
