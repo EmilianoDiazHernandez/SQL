@@ -5,20 +5,21 @@ import parser.ast.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class ExecutionVisitor implements StatementVisitor<Void> {
+public class ExecutionVisitor implements StatementVisitor<QueryResult> {
 
     @Override
-    public Void visitSelect(Select select) {
+    public QueryResult visitSelect(Select select) {
         String tableName = select.from.getLexeme();
         Table table;
         try {
             table = new Table(tableName);
         } catch (IOException e) {
             System.err.println("Error: " + e.getMessage());
-            return null;
+            return new QueryResult("Error: Table not found.");
         }
 
         List<Map<String, Object>> rows = table.getRows();
@@ -38,10 +39,8 @@ public class ExecutionVisitor implements StatementVisitor<Void> {
                         include = false;
                     }
                 } catch (RuntimeException e) {
-                    // Skip row on error? Or abort?
-                    // For now, print error and abort.
                     System.err.println("Runtime Error: " + e.getMessage());
-                    return null;
+                    return new QueryResult("Error: " + e.getMessage());
                 }
             }
             if (include) {
@@ -49,58 +48,50 @@ public class ExecutionVisitor implements StatementVisitor<Void> {
             }
         }
 
-        // 2. Project (SELECT) and Print
+        // 2. Project (SELECT)
+        List<String> headers = new ArrayList<>();
+        List<Map<String, Object>> resultRows = new ArrayList<>();
+
         if (filteredRows.isEmpty()) {
-            System.out.println("(No rows returned)");
-            return null;
+            return new QueryResult(Collections.emptyList(), Collections.emptyList());
         }
 
         if (select.columns == null || select.columns.isEmpty()) {
             // SELECT *
-            printHeader(table.getColumns());
-            for (Map<String, Object> row : filteredRows) {
-                printRow(row, table.getColumns());
-            }
+            headers.addAll(table.getColumns());
+            resultRows.addAll(filteredRows);
         } else {
             // SELECT expr1, expr2...
-            // Print a dummy header or try to infer names?
-            // Let's print "Column 1 | Column 2..."
-            List<String> headers = new ArrayList<>();
             for (int i = 0; i < select.columns.size(); i++) {
-                headers.add("Col " + (i + 1));
+                // Try to use alias or expression string representation for header
+                // For now, simple "Col 1", "Col 2"... or if it's an Identifier, use the name.
+                // We'll use a simple approach for now.
+                Expression expr = select.columns.get(i);
+                if (expr instanceof Identifier) {
+                    headers.add(((Identifier) expr).token.getLexeme());
+                } else {
+                    headers.add("Col_" + (i + 1));
+                }
             }
-            printHeader(headers);
 
             for (Map<String, Object> row : filteredRows) {
                 try {
                     ExpressionEvaluator evaluator = new ExpressionEvaluator(row);
-                    List<String> values = new ArrayList<>();
-                    for (Expression colExpr : select.columns) {
+                    Map<String, Object> projectedRow = new java.util.LinkedHashMap<>();
+                    
+                    for (int i = 0; i < select.columns.size(); i++) {
+                        Expression colExpr = select.columns.get(i);
                         Object val = evaluator.evaluate(colExpr);
-                        values.add(val == null ? "NULL" : val.toString());
+                        projectedRow.put(headers.get(i), val);
                     }
-                    System.out.println(String.join(" | ", values));
+                    resultRows.add(projectedRow);
                 } catch (RuntimeException e) {
                     System.err.println("Runtime Error in SELECT list: " + e.getMessage());
-                    return null;
+                    return new QueryResult("Error in projection: " + e.getMessage());
                 }
             }
         }
 
-        return null;
-    }
-
-    private void printHeader(List<String> columns) {
-        System.out.println(String.join(" | ", columns));
-        System.out.println("-".repeat(Math.max(columns.size() * 10, 20))); 
-    }
-
-    private void printRow(Map<String, Object> row, List<String> columns) {
-        List<String> values = new ArrayList<>();
-        for (String col : columns) {
-            Object val = row.get(col);
-            values.add(val == null ? "NULL" : val.toString());
-        }
-        System.out.println(String.join(" | ", values));
+        return new QueryResult(headers, resultRows);
     }
 }

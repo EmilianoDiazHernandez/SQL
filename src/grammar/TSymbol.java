@@ -1,6 +1,6 @@
 package grammar;
 
-public enum TSymbol implements Symbol {
+public enum TSymbol {
     ID,
 
     // Palabras reservadas
