@@ -12,6 +12,7 @@
     <modules>
         <module>sql-core</module>
         <module>sql-cli</module>
+        <module>sql-ui</module>
     </modules>
 
     <properties>
