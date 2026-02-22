@@ -1,8 +1,6 @@
 package scanner;
 
 import grammar.TSymbol;
-import main.Main;
-
 import java.util.*;
 
 public class Scanner {
@@ -176,7 +174,7 @@ public class Scanner {
                     }else lexeme.append(character);
                     break;
                 default:
-                    Main.error(i, "Caracater '"+character+"' invalido");
+                    System.err.println("[Scanner] Caracater '"+character+"' invalido en indice " + i);
                     state = 0;
                     break;
             }

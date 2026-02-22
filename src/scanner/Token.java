@@ -19,6 +19,19 @@ public class Token {
         this.line = 0;
     }
 
+    public TSymbol getType() {
+        return type;
+    }
+
+    public String getLexeme() {
+        return lexeme;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    @Override
     public String toString() {
         return "tipo: " + type + "\tlexema: " + lexeme + "\t linea: " + line;
     }
