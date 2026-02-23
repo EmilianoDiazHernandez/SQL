@@ -6,13 +6,21 @@ Un motor de base de datos SQL ligero y educativo escrito en Java, capaz de compi
 
 ## Galería del Proyecto
 
-| Editor de Consultas y Resultados | Explorador de Tablas (CSV) |
-|:---:|:---:|
-| ![Main UI](./assets/screenshots/img.png) | ![Table View](./assets/screenshots/img_1.png) |
+### Interfaz Principal y Explorador
+El cliente ofrece un panel intuitivo con un editor de consultas SQL, una barra lateral para explorar las tablas disponibles y un visor de resultados estructurados en formato de cuadrícula.
+![Vista Principal](./assets/screenshots/img.png)
 
-| Análisis de Consultas Complejas | Feedback de Errores en Tiempo Real |
-|:---:|:---:|
-| ![Query Execution](./assets/screenshots/img_2.png) | ![Error Handling](./assets/screenshots/img_3.png) |
+### Exploración Rápida de Datos
+Visualización clara e inmediata de los registros almacenados. Permite revisar rápidamente la estructura de columnas y los tipos de datos de cualquier tabla seleccionada.
+![Explorador de Tablas](./assets/screenshots/img_1.png)
+
+### Ejecución de Consultas Condicionales (Filtros Numéricos)
+Soporte completo para cláusulas `WHERE`. En este ejemplo, filtrando información específica (correos electrónicos) basada en condiciones numéricas.
+![Consultas Condicionales](./assets/screenshots/img_2.png)
+
+### Filtrado Exacto por Texto
+Capacidad para procesar consultas con cadenas de texto, devolviendo resultados precisos y mostrando en la barra de estado el tiempo de ejecución exacto (en milisegundos) y la cantidad de filas afectadas.
+![Filtrado por Texto](./assets/screenshots/img_3.png)
 
 ---
 
