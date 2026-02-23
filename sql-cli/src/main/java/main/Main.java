@@ -21,10 +21,23 @@ import java.util.Map;
 
 public class Main {
 
+    // Default to current directory
+    private static Path dbPath = Paths.get(".");
+
     public static void main(String[] args) throws IOException {
-        // If arguments are provided, try to run a script file
-        if (args.length > 0) {
-            runScript(args[0]);
+        String scriptFile = null;
+
+        for (int i = 0; i < args.length; i++) {
+            if ("--db".equals(args[i]) && i + 1 < args.length) {
+                dbPath = Paths.get(args[i + 1]);
+                i++;
+            } else if (scriptFile == null) {
+                scriptFile = args[i];
+            }
+        }
+
+        if (scriptFile != null) {
+            runScript(scriptFile);
         } else {
             runRepl();
         }
@@ -42,7 +55,8 @@ public class Main {
 
     private static void runRepl() throws IOException {
         System.out.println("==================================================");
-        System.out.println("   SQL Engine ");
+        System.out.println("   SQL Engine (Recursive Descent)");
+        System.out.println("   Database Path: " + dbPath.toAbsolutePath());
         System.out.println("   Type '.help' for instructions.");
         System.out.println("   Type '.exit' to quit.");
         System.out.println("==================================================");
@@ -60,10 +74,8 @@ public class Main {
             
             String trimmedLine = line.trim();
 
-            // Handle empty lines
             if (trimmedLine.isEmpty()) continue;
 
-            // Handle meta-commands (only if buffer is empty)
             if (buffer.length() == 0 && trimmedLine.startsWith(".")) {
                 handleMetaCommand(trimmedLine);
                 continue;
@@ -71,7 +83,6 @@ public class Main {
 
             buffer.append(line).append(" ");
 
-            // Check if statement ends with semicolon
             if (trimmedLine.endsWith(";")) {
                 long startTime = System.nanoTime();
                 run(buffer.toString());
@@ -80,7 +91,7 @@ public class Main {
                 double durationMs = (endTime - startTime) / 1_000_000.0;
                 System.out.printf("(%.2f ms)%n", durationMs);
                 
-                buffer.setLength(0); // Clear buffer
+                buffer.setLength(0); 
             }
         }
     }
@@ -101,6 +112,20 @@ public class Main {
             case ".tables":
                 listTables();
                 break;
+            case ".path":
+                if (parts.length > 1) {
+                    Path newPath = Paths.get(parts[1]);
+                    if (Files.exists(newPath) && Files.isDirectory(newPath)) {
+                        dbPath = newPath;
+                        System.out.println("Database path changed to: " + dbPath.toAbsolutePath());
+                        listTables();
+                    } else {
+                        System.out.println("Error: Directory not found: " + parts[1]);
+                    }
+                } else {
+                    System.out.println("Current Database Path: " + dbPath.toAbsolutePath());
+                }
+                break;
             case ".describe":
             case ".desc":
                 if (parts.length > 1) {
@@ -120,6 +145,7 @@ public class Main {
     private static void printHelp() {
         System.out.println("\n--- Meta Commands ---");
         System.out.println("  .help                Show this help message");
+        System.out.println("  .path [dir]          Show or change current database directory");
         System.out.println("  .tables              List available tables (CSV files)");
         System.out.println("  .describe <table_name> Show columns of a table");
         System.out.println("  .exit                Exit the application");
@@ -131,15 +157,15 @@ public class Main {
     }
 
     private static void listTables() {
-        File folder = new File("db");
+        File folder = dbPath.toFile();
         if (!folder.exists() || !folder.isDirectory()) {
-            System.out.println("Database directory 'db' not found.");
+            System.out.println("Database directory '" + folder.getAbsolutePath() + "' not found.");
             return;
         }
 
         File[] listOfFiles = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".csv"));
         
-        System.out.println("\n--- Tables ---");
+        System.out.println("\n--- Tables in " + folder.getName() + " ---");
         if (listOfFiles != null && listOfFiles.length > 0) {
             for (File file : listOfFiles) {
                 String tableName = file.getName().replace(".csv", "");
@@ -153,7 +179,7 @@ public class Main {
 
     private static void describeTable(String tableName) {
         try {
-            Table table = new Table(tableName);
+            Table table = new Table(dbPath, tableName);
             List<String> columns = table.getColumns();
             System.out.println("\nTable: " + tableName);
             System.out.println("Columns:");
@@ -167,21 +193,17 @@ public class Main {
     }
 
     private static void run(String source) {
-        // 1. Scan
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
 
-        // 2. Parse
         SqlParser parser = new SqlParser(tokens);
-        // We only support one statement per line in this REPL mostly, but parser returns List.
         List<Statement> statements = parser.parse();
 
         if (statements.isEmpty()) {
             return;
         }
 
-        // 3. Execute
-        ExecutionVisitor executor = new ExecutionVisitor();
+        ExecutionVisitor executor = new ExecutionVisitor(dbPath);
         for (Statement stmt : statements) {
             try {
                 QueryResult result = stmt.accept(executor);
@@ -203,7 +225,6 @@ public class Main {
             return;
         }
 
-        // Calculate dynamic column widths
         int[] widths = new int[columns.size()];
         for (int i = 0; i < columns.size(); i++) {
             widths[i] = columns.get(i).length();
@@ -218,11 +239,9 @@ public class Main {
             }
         }
 
-        // Print Header
         printRow(columns, widths);
         printSeparator(widths);
 
-        // Print Rows
         for (Map<String, Object> row : rows) {
             List<String> values = new ArrayList<>();
             for (String col : columns) {
@@ -237,7 +256,7 @@ public class Main {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < values.size(); i++) {
             String val = values.get(i);
-            sb.append(String.format("%-" + (widths[i] + 2) + "s", val)); // +2 for padding
+            sb.append(String.format("%-" + (widths[i] + 2) + "s", val)); 
             if (i < values.size() - 1) sb.append("| ");
         }
         System.out.println(sb.toString());

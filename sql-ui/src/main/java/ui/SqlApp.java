@@ -1,6 +1,5 @@
 package ui;
 
-import dao.Table;
 import parser.SqlParser;
 import parser.ast.Statement;
 import semantic.ExecutionVisitor;
@@ -9,7 +8,6 @@ import scanner.Scanner;
 import scanner.Token;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,10 +19,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -34,11 +34,14 @@ public class SqlApp extends Application {
     private TableView<Map<String, Object>> resultTable;
     private ListView<String> tableList;
     private Label statusLabel;
+    
     private ExecutionVisitor executor;
+    private Path dbDirectory = Paths.get("db"); // Default
 
     @Override
     public void start(Stage primaryStage) {
-        executor = new ExecutionVisitor();
+        // Initialize executor with default path
+        executor = new ExecutionVisitor(dbDirectory);
 
         BorderPane root = new BorderPane();
         
@@ -48,11 +51,14 @@ public class SqlApp extends Application {
         toolbar.setAlignment(Pos.CENTER_LEFT);
         toolbar.setStyle("-fx-background-color: #f4f4f4; -fx-border-color: #ddd; -fx-border-width: 0 0 1 0;");
 
+        Button openButton = new Button("Open Folder...");
+        openButton.setOnAction(e -> openDatabaseFolder(primaryStage));
+
         Button executeButton = new Button("Execute (Ctrl+Enter)");
-        executeButton.setStyle("-fx-font-weight: bold; -fx-base: #4caf50;"); // Greenish button
+        executeButton.setStyle("-fx-font-weight: bold; -fx-base: #4caf50;");
         executeButton.setOnAction(e -> executeQuery());
 
-        toolbar.getChildren().add(executeButton);
+        toolbar.getChildren().addAll(openButton, new Separator(javafx.geometry.Orientation.VERTICAL), executeButton);
         root.setTop(toolbar);
 
         // --- 2. Sidebar (Left) - Database Schema ---
@@ -60,13 +66,12 @@ public class SqlApp extends Application {
         sidebar.setPadding(new Insets(5));
         sidebar.setPrefWidth(200);
         
-        Label sidebarTitle = new Label("Database Tables");
+        Label sidebarTitle = new Label("Tables");
         sidebarTitle.setStyle("-fx-font-weight: bold;");
         
         tableList = new ListView<>();
         refreshTableList();
         
-        // Double click on table name inserts "SELECT * FROM table;"
         tableList.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 String selectedTable = tableList.getSelectionModel().getSelectedItem();
@@ -77,14 +82,14 @@ public class SqlApp extends Application {
             }
         });
 
-        Button refreshButton = new Button("Refresh");
+        Button refreshButton = new Button("Refresh List");
         refreshButton.setMaxWidth(Double.MAX_VALUE);
         refreshButton.setOnAction(e -> refreshTableList());
 
         sidebar.getChildren().addAll(sidebarTitle, tableList, refreshButton);
         VBox.setVgrow(tableList, Priority.ALWAYS);
 
-        // --- 3. Main Content (Center) - SplitPane ---
+        // --- 3. Main Content (Center) ---
         SplitPane mainSplit = new SplitPane();
         mainSplit.setOrientation(javafx.geometry.Orientation.VERTICAL);
 
@@ -95,7 +100,6 @@ public class SqlApp extends Application {
         sqlEditor = new TextArea();
         sqlEditor.setPromptText("SELECT * FROM table WHERE ...");
         sqlEditor.setFont(javafx.scene.text.Font.font("Monospaced", 14));
-        // Add execute shortcut
         sqlEditor.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.ENTER && event.isControlDown()) {
                 executeQuery();
@@ -117,12 +121,11 @@ public class SqlApp extends Application {
         VBox.setVgrow(resultTable, Priority.ALWAYS);
 
         mainSplit.getItems().addAll(editorBox, resultsBox);
-        mainSplit.setDividerPositions(0.4); // 40% for editor, 60% for results
+        mainSplit.setDividerPositions(0.4);
 
-        // Combine Sidebar and Main Content
         SplitPane horizontalSplit = new SplitPane();
         horizontalSplit.getItems().addAll(sidebar, mainSplit);
-        horizontalSplit.setDividerPositions(0.2); // 20% for sidebar
+        horizontalSplit.setDividerPositions(0.2);
 
         root.setCenter(horizontalSplit);
 
@@ -130,29 +133,49 @@ public class SqlApp extends Application {
         HBox statusBar = new HBox();
         statusBar.setPadding(new Insets(5));
         statusBar.setStyle("-fx-border-color: #ddd; -fx-border-width: 1 0 0 0;");
-        statusLabel = new Label("Ready");
+        statusLabel = new Label("Ready. Database: " + dbDirectory.toAbsolutePath());
         statusBar.getChildren().add(statusLabel);
         root.setBottom(statusBar);
 
-        // Scene Setup
         Scene scene = new Scene(root, 900, 600);
         primaryStage.setTitle("SQL Client");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
+    private void openDatabaseFolder(Stage stage) {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Select Database Folder (containing CSV files)");
+        
+        File initialDir = dbDirectory.toFile();
+        if (initialDir.exists()) {
+            directoryChooser.setInitialDirectory(initialDir);
+        }
+
+        File selectedDirectory = directoryChooser.showDialog(stage);
+        if (selectedDirectory != null) {
+            dbDirectory = selectedDirectory.toPath();
+            executor = new ExecutionVisitor(dbDirectory);
+            refreshTableList();
+            statusLabel.setText("Database changed to: " + dbDirectory.toAbsolutePath());
+        }
+    }
+
     private void refreshTableList() {
         tableList.getItems().clear();
-        File folder = new File("db"); // Ensure working directory is project root
+        File folder = dbDirectory.toFile();
+        
         if (folder.exists() && folder.isDirectory()) {
             File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".csv"));
             if (files != null) {
                 for (File f : files) {
                     tableList.getItems().add(f.getName().replace(".csv", ""));
                 }
+            } else {
+                 tableList.setPlaceholder(new Label("No CSV files found."));
             }
         } else {
-            tableList.setPlaceholder(new Label("No 'db' folder found!"));
+            tableList.setPlaceholder(new Label("Folder not found!"));
         }
     }
 
@@ -167,11 +190,9 @@ public class SqlApp extends Application {
         long startTime = System.nanoTime();
 
         try {
-            // 1. Scan
             Scanner scanner = new Scanner(source);
             List<Token> tokens = scanner.scanTokens();
 
-            // 2. Parse
             SqlParser parser = new SqlParser(tokens);
             List<Statement> statements = parser.parse();
 
@@ -180,7 +201,6 @@ public class SqlApp extends Application {
                 return;
             }
 
-            // Execute (only the last one for now, or loop and show last result)
             QueryResult lastResult = null;
             for (Statement stmt : statements) {
                 lastResult = stmt.accept(executor);
@@ -199,13 +219,12 @@ public class SqlApp extends Application {
         } catch (Exception e) {
             statusLabel.setText("Error: " + e.getMessage());
             statusLabel.setStyle("-fx-text-fill: red;");
-            // Also show error in a dialog if critical? For now status bar is fine.
             e.printStackTrace(); 
         }
     }
 
     private void displayResult(QueryResult result) {
-        statusLabel.setStyle("-fx-text-fill: black;"); // Reset color
+        statusLabel.setStyle("-fx-text-fill: black;");
 
         List<String> columns = result.getColumns();
         List<Map<String, Object>> rows = result.getRows();
@@ -215,7 +234,6 @@ public class SqlApp extends Application {
             return;
         }
 
-        // Create TableColumns dynamically
         for (String colName : columns) {
             TableColumn<Map<String, Object>, String> col = new TableColumn<>(colName);
             col.setCellValueFactory(data -> {
@@ -225,7 +243,6 @@ public class SqlApp extends Application {
             resultTable.getColumns().add(col);
         }
 
-        // Add Data
         resultTable.getItems().addAll(rows);
     }
 
