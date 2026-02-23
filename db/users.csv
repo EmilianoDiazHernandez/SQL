@@ -1,0 +1,16 @@
+id,first_name,last_name,age,email,city,registration_date,is_active
+1,Carlos,Perez,28,carlos.perez@example.com,Madrid,2023-01-15,true
+2,Maria,Garcia,34,maria.g@example.com,Barcelona,2023-02-10,true
+3,John,Doe,25,john.doe@example.com,New York,2022-11-05,false
+4,Jane,Smith,30,jane.s@example.com,London,2023-03-22,true
+5,Emiliano,Martinez,21,emi.martinez@example.com,Buenos Aires,2023-05-14,true
+6,Laura,Gomez,42,lgomez@example.com,Mexico City,2021-08-19,true
+7,David,Lee,29,davidlee88@example.com,Toronto,2023-07-01,false
+8,Sophia,Chen,24,schen@example.com,Vancouver,2023-09-12,true
+9,Ahmed,Ali,37,ahmed.ali@example.com,Dubai,2020-12-30,true
+10,Yuki,Tanaka,31,yuki.t@example.com,Tokyo,2022-04-18,false
+11,Anna,Schmidt,27,anna.s@example.com,Berlin,2023-06-25,true
+12,Luis,Silva,45,lsilva@example.com,Sao Paulo,2019-10-11,true
+13,Emma,Wilson,22,emmaw@example.com,Sydney,2023-08-08,true
+14,Lucas,Rossi,35,lucas.r@example.com,Rome,2021-03-17,false
+15,Chloe,Martin,26,chloem@example.com,Paris,2022-09-09,true

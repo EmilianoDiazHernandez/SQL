@@ -1,0 +1,16 @@
+id,product_name,category,price,stock_quantity,supplier,is_available,release_date
+1,Laptop Pro 15,Electronics,1299.99,50,TechCorp,true,2023-01-10
+2,Wireless Mouse,Electronics,29.99,200,TechCorp,true,2023-03-15
+3,Coffee Maker,Home Appliances,89.50,30,HomeBrew,true,2022-11-20
+4,Running Shoes,Apparel,120.00,100,FitBrand,true,2023-05-05
+5,Mechanical Keyboard,Electronics,105.75,15,KeyMaster,false,2021-08-30
+6,Desk Lamp,Home Office,45.00,75,Lumiere,true,2022-09-12
+7,Smartphone X,Electronics,899.00,0,MobileGen,false,2024-01-20
+8,Water Bottle 1L,Accessories,15.50,500,AquaLife,true,2023-06-18
+9,Office Chair,Home Office,199.99,25,ErgoSeating,true,2021-12-05
+10,Bluetooth Headphones,Electronics,150.00,60,SoundMax,true,2023-04-22
+11,Yoga Mat,Fitness,25.00,150,ZenFit,true,2022-02-14
+12,Blender,Home Appliances,65.99,40,KitchenPlus,true,2022-07-08
+13,Graphic T-Shirt,Apparel,19.99,300,CottonWear,true,2023-08-01
+14,Gaming Monitor 27",Electronics,349.50,10,ScreenPro,false,2021-10-10
+15,Backpack,Accessories,55.00,80,TravelGear,true,2023-02-28

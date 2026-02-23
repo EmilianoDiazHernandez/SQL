@@ -4,11 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
  * Represents a database table loaded from a CSV file.
- * The CSV file must be located in the 'db' directory.
  */
 public class Table {
     private final String name;
@@ -16,20 +16,21 @@ public class Table {
     private final List<Map<String, Object>> rows;
 
     /**
-     * Loads a table from a CSV file.
+     * Loads a table from a CSV file in the specified directory.
      *
+     * @param baseDir   The directory containing the CSV file.
      * @param tableName The name of the table (without .csv extension).
      * @throws IOException If the file cannot be read.
      */
-    public Table(String tableName) throws IOException {
+    public Table(Path baseDir, String tableName) throws IOException {
         this.name = tableName;
         this.columns = new ArrayList<>();
         this.rows = new ArrayList<>();
-        loadFromCsv(tableName);
+        loadFromCsv(baseDir, tableName);
     }
 
-    private void loadFromCsv(String tableName) throws IOException {
-        File file = new File("db/" + tableName + ".csv");
+    private void loadFromCsv(Path baseDir, String tableName) throws IOException {
+        File file = baseDir.resolve(tableName + ".csv").toFile();
         if (!file.exists()) {
             throw new IOException("Table '" + tableName + "' not found (file: " + file.getAbsolutePath() + ")");
         }

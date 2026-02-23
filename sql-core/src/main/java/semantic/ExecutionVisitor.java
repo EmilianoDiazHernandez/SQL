@@ -4,6 +4,8 @@ import dao.Table;
 import parser.ast.*;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,12 +13,22 @@ import java.util.Map;
 
 public class ExecutionVisitor implements StatementVisitor<QueryResult> {
 
+    private final Path dbDirectory;
+
+    public ExecutionVisitor() {
+        this(Paths.get("db"));
+    }
+
+    public ExecutionVisitor(Path dbDirectory) {
+        this.dbDirectory = dbDirectory;
+    }
+
     @Override
     public QueryResult visitSelect(Select select) {
         String tableName = select.from.getLexeme();
         Table table;
         try {
-            table = new Table(tableName);
+            table = new Table(dbDirectory, tableName);
         } catch (IOException e) {
             System.err.println("Error: " + e.getMessage());
             return new QueryResult("Error: Table not found.");
@@ -64,8 +76,6 @@ public class ExecutionVisitor implements StatementVisitor<QueryResult> {
             // SELECT expr1, expr2...
             for (int i = 0; i < select.columns.size(); i++) {
                 // Try to use alias or expression string representation for header
-                // For now, simple "Col 1", "Col 2"... or if it's an Identifier, use the name.
-                // We'll use a simple approach for now.
                 Expression expr = select.columns.get(i);
                 if (expr instanceof Identifier) {
                     headers.add(((Identifier) expr).token.getLexeme());
